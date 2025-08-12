@@ -182,21 +182,19 @@ Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 
 Pixel*& WorldGeneration::getPixelFromGlobal(Vector2D<int> position) {
 	// GlobalVariables::chunkSize = GlobalVariables::screeenSize;
-	Vector2D chunkCoord(0, 0);
-	Vector2D localCoord(0, 0);
+	Vector2D<int> chunkCoord(0, 0);
+	Vector2D<int> localCoord(0, 0);
 
-	chunkCoord.x = std::floor(position.x / GlobalVariables::chunkSize);
-	chunkCoord.y = std::floor(position.y / GlobalVariables::chunkSize);
+	chunkCoord.x = position.x / GlobalVariables::chunkSize;
+	chunkCoord.y = position.y / GlobalVariables::chunkSize;
 
-	localCoord.x = fmod(position.x, GlobalVariables::chunkSize);
-	if (localCoord.x < 0) localCoord.x += GlobalVariables::chunkSize; // Handle negative coordinates
-
-	localCoord.y = fmod(position.y, GlobalVariables::chunkSize);
-	if (localCoord.y < 0) localCoord.y += GlobalVariables::chunkSize; // Handle negative coordinates
+	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
+	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 
 	if (worldVecStore.find(chunkCoord) != worldVecStore.end()) {
-		return worldVecStore[chunkCoord][localCoord.y][localCoord.x]; // row x col
+		return worldVecStore[chunkCoord][localCoord.y][localCoord.x];
 	}
+
 	static Pixel* nullpixel = nullptr;
 
 	return nullpixel;
