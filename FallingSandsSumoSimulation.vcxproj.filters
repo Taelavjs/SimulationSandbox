@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{685a88e6-fbc8-479e-8305-bfd706b9dc45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{b591bed8-b42e-4c55-a66d-324999d2bb6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{fea8454f-1aaa-4365-9766-62bf76013f20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Playables">
+      <UniqueIdentifier>{a389db1b-8260-4375-9383-b22961feeb7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameSetup">
+      <UniqueIdentifier>{61663a94-8c8c-4525-9d5c-a877da7faa1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Elements">
+      <UniqueIdentifier>{6a598ae3-50e1-40ca-85bb-9478b1118483}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\GameSetup\World\Chunk.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\GameSetup\Game.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\GameSetup\Grid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\GameSetup\Rendering.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\GameSetup\World\WorldGeneration.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\Gas.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\Liquid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\Moveable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Napalm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Oil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\Pixel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Rock.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Sand.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Smoke.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\SolidDynamic.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\BaseElements\SolidImmoveable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Elements\Water.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Playables\Player.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Playables\PlayerHandlers\PlayerStateManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Textures\Animation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Textures\Sprite.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Textures\SpriteAnimation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Textures\SpriteSheet.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Utility\GlobalVariables.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Utility\ProceduralTerrainGen.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Utility\ThreadPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Utility\Velocity.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Utility\FastNoiseLite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SDL2 Template.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SDL2 Template.aps" />
+    <None Include="SDL2.dll" />
+    <None Include="SDL2_image.dll" />
+    <None Include="SDL2_mixer.dll" />
+    <None Include="SDL2_ttf.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\rickroll.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cppFallingSands-master\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Gas.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Liquid.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Moveable.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Pixel.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\SolidDynamic.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\SolidImmoveable.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Napalm.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Oil.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Rock.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Sand.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Smoke.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Elements\Water.cpp">
+      <Filter>Header Files\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\GameSetup\Game.cpp">
+      <Filter>Source Files\GameSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\GameSetup\Grid.cpp">
+      <Filter>Source Files\GameSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\GameSetup\Rendering.cpp">
+      <Filter>Source Files\GameSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\GameSetup\World\Chunk.cpp">
+      <Filter>Source Files\GameSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\GameSetup\World\WorldGeneration.cpp">
+      <Filter>Source Files\GameSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Playables\Player.cpp">
+      <Filter>Source Files\Playables</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Playables\PlayerHandlers\PlayerStateManager.cpp">
+      <Filter>Source Files\Playables</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Textures\Animation.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Textures\Sprite.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Textures\SpriteAnimation.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Textures\SpriteSheet.cpp">
+      <Filter>Source Files\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Utility\ProceduralTerrainGen.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Utility\Velocity.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
