@@ -144,7 +144,7 @@ void Game::updateSequence(int& row, int& col)
 	pixel->update(row, col, GlobalVariables::chunkSize, GlobalVariables::chunkSize, worldGeneration);
 }
 
-void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D& playerCoords)
+void Game::worker(Vector2D<int> globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords)
 {
 	// Calculate the boundaries of the current chunk
 
@@ -168,7 +168,7 @@ void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkC
 		}
 	}
 }
-void Game::ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D& playerCoords)
+void Game::ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords)
 {
 	std::vector<std::future<void>> futures;
 
@@ -199,7 +199,7 @@ void Game::update()
 	Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
 
 	Vector2D dimensions = player->getDimensions();
-	std::map<Vector2D, Chunk>& chunks = worldGeneration.getVecStore();
+	std::map<Vector2D<int>, Chunk>& chunks = worldGeneration.getVecStore();
 	// Runs over each chunk, specifying what sub chunk the X and Y update sequence should start at
 	// It allows for no two chunks directly next to each other to be updating at the same time, allowing for multicore processing
 	// Without dirty reads/rights
@@ -222,7 +222,7 @@ void Game::update()
 
 void Game::render()
 {
-	std::map<Vector2D, Chunk>& temp = worldGeneration.getVecStore();
+	std::map<Vector2D<int>, Chunk>& temp = worldGeneration.getVecStore();
 	for (auto& mapEntry : temp) {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;

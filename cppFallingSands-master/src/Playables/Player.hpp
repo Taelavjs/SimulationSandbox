@@ -28,11 +28,11 @@ public:
 	void playerReleaseHandler(SDL_Scancode e);
 	void renderPlayer(SDL_Renderer* renderer, int screenWidth);
 	void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
-	Vector2D getCoordinates() {
+	Vector2D<float> getCoordinates() {
 		return position;
 	}
 
-	Vector2D getDimensions() {
+	Vector2D<float> getDimensions() {
 		return playerScale;
 	}
 
@@ -51,10 +51,10 @@ private:
 	SDL_Rect groundedRect;
 	std::stack<SDL_Rect> stckToRender;
 	Sprite* playerSprite;
-	Vector2D position;
-	Vector2D validPosition;
-	Vector2D playerCenterPosition;
-	Vector2D playerScale;
+	Vector2D<float> position;
+	Vector2D<float> validPosition;
+	Vector2D<float> playerCenterPosition;
+	Vector2D<float> playerScale;
 	bool dLeft{ false }, dRight{ false }, dUp{ false }, dDown{ false };
 	bool isFlipped{ false };
 	std::map<playerStates, Animation> animations;

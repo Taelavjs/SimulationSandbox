@@ -16,7 +16,7 @@ void Moveable::updateVelocity(int& newCol, int upDown)
 	if (yVelocity > getTerminalY() * upDown) yVelocity = getTerminalY();
 }
 
-double Moveable::randomNumber()
+float Moveable::randomNumber()
 {
 	static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
 

@@ -39,8 +39,8 @@ public:
 	double randomnumber();
 	void updateSequence(int& row, int& col);
 	void pixelsToBlocks(std::vector<float> pixels);
-	void ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D& playerCoords);
-	void worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D& playerCoords);
+	void ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
+	void worker(Vector2D<int> globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
 	void generateCorridors(std::vector<float> pixels);
 
 private:

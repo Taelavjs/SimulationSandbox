@@ -19,31 +19,31 @@ class Pixel;
 class Chunk;
 class WorldGeneration {
 public:
-    WorldGeneration();
-    ~WorldGeneration();
-    void cleanUp();
-    void generateBlock();
-    void pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, Chunk &chunk);
-    void generateCorridors(std::vector<float> noise, Vector2D worldQuad, Chunk &chunk);
-    Chunk& getLocalVec();
-    Vector2D getGlobalCoordinates(Vector2D position);
-    std::map<Vector2D, Chunk>& getVecStore();
-    Vector2D getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
-    Chunk& getChunk(Vector2D chunkGlobalCoord);
-    Pixel*& getPixelFromGlobal(Vector2D position);
-    void clearPixelProcessed();
-    void swapTwoValues(Vector2D pos1, Vector2D pos2);
-    void burntSmoke(const int row, const int col);
+	WorldGeneration();
+	~WorldGeneration();
+	void cleanUp();
+	void generateBlock();
+	void pixelsToBlocks(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);
+	void generateCorridors(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);
+	Chunk& getLocalVec();
+	Vector2D<float> getGlobalCoordinates(Vector2D<float> position);
+	std::map<Vector2D<int>, Chunk>& getVecStore();
+	Vector2D<int> getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
+	Chunk& getChunk(Vector2D<float> chunkGlobalCoord);
+	Pixel*& getPixelFromGlobal(Vector2D<int> position);
+	void clearPixelProcessed();
+	void swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2);
+	void burntSmoke(const int row, const int col);
 private:
-    std::map<Vector2D, Chunk> worldVecStore;
-    Sand *sand;
-    Water *water;
-    Rock *rock;
-    Smoke *smoke;
-    Oil *oil;
-    Napalm *napalm;
-    int width{0};
-    Chunk emptyChunk;
+	std::map<Vector2D<int>, Chunk> worldVecStore;
+	Sand* sand;
+	Water* water;
+	Rock* rock;
+	Smoke* smoke;
+	Oil* oil;
+	Napalm* napalm;
+	int width{ 0 };
+	Chunk emptyChunk;
 };
 
 #endif /* WORLDGENERATION */

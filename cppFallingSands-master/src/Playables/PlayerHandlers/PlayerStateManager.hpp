@@ -2,27 +2,27 @@
 #define PLAYERSTATEMANAGER
 #include "../../Utility/Velocity.hpp"
 enum playerStates {
-    Idle,
-    Running,
-    Jumping,
-    Falling
+	Idle,
+	Running,
+	Jumping,
+	Falling
 };
 
 class PlayerStateManager {
 public:
-    PlayerStateManager();
-    ~PlayerStateManager();
+	PlayerStateManager();
+	~PlayerStateManager();
 
 private:
-    playerStates currentState{playerStates::Idle};
-    void idleStateChangeConditions(Vector2D velocity, bool isGrounded);
-    void runningStateChangeConditions(Vector2D velocity, bool isGrounded);
-    void jumpingStateChangeConditions(Vector2D velocity, bool isGrounded);
-    void fallingStateChangeConditions(Vector2D velocity, bool isGrounded);
+	playerStates currentState{ playerStates::Idle };
+	void idleStateChangeConditions(Vector2D<float> velocity, bool isGrounded);
+	void runningStateChangeConditions(Vector2D<float> velocity, bool isGrounded);
+	void jumpingStateChangeConditions(Vector2D<float> velocity, bool isGrounded);
+	void fallingStateChangeConditions(Vector2D<float> velocity, bool isGrounded);
 
 public:
-    playerStates getCurrentState();
-    void updatePlayerState(Vector2D playerVelocity, bool isGrounded);
+	playerStates getCurrentState();
+	void updatePlayerState(Vector2D<float> playerVelocity, bool isGrounded);
 
 };
 #endif /* PLAYERSTATEMANAGER */
