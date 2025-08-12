@@ -1,4 +1,4 @@
-#include "Sprite.hpp"
+#include "Sprite.hpp" // Test Commit
 
 Sprite::Sprite(const char* srcPath) {
 	SDL_Renderer* renderer = Rendering::getRenderer();
