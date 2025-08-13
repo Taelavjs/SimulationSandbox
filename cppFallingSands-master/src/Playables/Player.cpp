@@ -177,8 +177,6 @@ void Player::collisionHandler(WorldGeneration& worldGeneration)
 		}
 		dispY = (dispY * 1) / collisions.size();
 		dispX = (dispX * 1) / collisions.size();
-		std::cout << "Y DISP  : " << dispY << '\n';
-		std::cout << "X DISP  : " << dispX << '\n';
 		position.y -= 2.5;
 		position.x += velocity.getVelocity().x;
 		resetPlayerColliders();

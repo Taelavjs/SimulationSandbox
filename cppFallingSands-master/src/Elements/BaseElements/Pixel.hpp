@@ -81,6 +81,6 @@ public:
 public:
 	virtual void ignite();
 	virtual bool hit();
-	virtual bool fireTick(WorldGeneration& worldGeneration, int row, int col);
+	virtual bool fireTick(WorldGeneration& worldGeneration, const int& row, const int& col);
 };
 #endif // PIXEL_HPP

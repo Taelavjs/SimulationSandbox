@@ -46,9 +46,9 @@ int main(int argc, char* argv[])
 	game.init();
 
 	const int fps = 60;
-	const float timeBetweenFrames = 1.0f / fps;
+	const double timeBetweenFrames = 1.0 / fps;
 	static Timer system_timer;
-	float accumulated_seconds{ 0.0f };
+	double accumulated_seconds{ 0.0 };
 	int i{ 0 };
 
 	while (game.getRunning())
@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
 		system_timer.tick();
 		accumulated_seconds += system_timer.elapsed_seconds;
 		GlobalVariables::setDeltaTime(accumulated_seconds);
+		std::cout << accumulated_seconds << '\n';
 		if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
 			accumulated_seconds = -timeBetweenFrames;
 			i++;

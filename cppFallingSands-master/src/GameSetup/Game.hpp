@@ -9,7 +9,6 @@
 #include <SDL.h>
 #include <future>
 
-
 class Pixel;
 class Sand;
 class Water;
@@ -37,10 +36,10 @@ public:
 	bool getRunning() const { return isRunning; }
 	void swapElements(int x, int y, int x2, int y2);
 	double randomnumber();
-	void updateSequence(int& row, int& col);
+	void updateSequence(const int& row, const int& col);
 	void pixelsToBlocks(std::vector<float> pixels);
 	void ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
-	void worker(Vector2D<int> globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
+	void worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords);
 	void generateCorridors(std::vector<float> pixels);
 
 private:
@@ -61,7 +60,6 @@ private:
 	Smoke* smoke;
 	Oil* oil;
 	Napalm* napalm;
-	ThreadPool threads;
 };
 
 #endif // GAME_HPP

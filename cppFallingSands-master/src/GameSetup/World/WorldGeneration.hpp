@@ -30,7 +30,7 @@ public:
 	std::map<Vector2D<int>, Chunk>& getVecStore();
 	Vector2D<int> getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
 	Chunk& getChunk(Vector2D<float> chunkGlobalCoord);
-	Pixel*& getPixelFromGlobal(Vector2D<int> position);
+	Pixel*& getPixelFromGlobal(const Vector2D<int>& position);
 	void clearPixelProcessed();
 	void swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2);
 	void burntSmoke(const int row, const int col);

@@ -70,7 +70,7 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D<int> wor
 {
 	int chunkStartX = worldQuad.x * GlobalVariables::chunkSize;
 	int chunkStartY = worldQuad.y * GlobalVariables::chunkSize;
-	std::cout << worldQuad.x << worldQuad.y << '\n';
+	// std::cout << worldQuad.x << worldQuad.y << '\n';
 	int total = 0;
 	std::setprecision(2);
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
@@ -180,7 +180,7 @@ Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 // Make the class able to give the correct chunk using global coordinates
 // Rather than swapping between global and local, much easier
 
-Pixel*& WorldGeneration::getPixelFromGlobal(Vector2D<int> position) {
+Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
 	// GlobalVariables::chunkSize = GlobalVariables::screeenSize;
 	Vector2D<int> chunkCoord(0, 0);
 	Vector2D<int> localCoord(0, 0);

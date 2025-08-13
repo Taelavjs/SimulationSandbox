@@ -19,19 +19,19 @@ void PlayerStateManager::updatePlayerState(Vector2D<float> playerVelocity, bool 
 {
 	switch (currentState) {
 	case playerStates::Idle:
-		std::cout << "Current State : " << "Idle" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
+		//std::cout << "Current State : " << "Idle" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
 		idleStateChangeConditions(playerVelocity, isGrounded);
 		break;
 	case playerStates::Jumping:
-		std::cout << "Current State : " << "Jumping" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
+		//std::cout << "Current State : " << "Jumping" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
 		jumpingStateChangeConditions(playerVelocity, isGrounded);
 		break;
 	case playerStates::Falling:
-		std::cout << "Current State : " << "Falling" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
+		//		std::cout << "Current State : " << "Falling" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
 		fallingStateChangeConditions(playerVelocity, isGrounded);
 		break;
 	case playerStates::Running:
-		std::cout << "Current State : " << "Running" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
+		//std::cout << "Current State : " << "Running" << "Velocity : " << playerVelocity.x << " " << playerVelocity.y << '\n';
 		runningStateChangeConditions(playerVelocity, isGrounded);
 		break;
 	}

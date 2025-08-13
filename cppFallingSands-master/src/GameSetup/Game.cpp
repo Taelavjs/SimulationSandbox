@@ -12,7 +12,7 @@
 #include "../Utility/GlobalVariables.hpp"
 
 Game::Game()
-	: isRunning(true), worldGeneration(), threads()
+	: isRunning(true), worldGeneration()
 {
 	sand = new Sand();
 	water = new Water();
@@ -44,7 +44,7 @@ Game::~Game()
 void Game::init()
 {
 	worldGeneration.generateBlock();
-	const char* playerSpritePath{ "Sprites/AnimationSheet_Character.png" };
+	const char* playerSpritePath{ "C:\\Users\\taela\\source\\repos\\FallingSandsSumoSimulation\\cppFallingSands-master\\Sprites\\AnimationSheet_Character.png" };
 
 	Rendering::setValues();
 	int width{ 32 };
@@ -126,7 +126,7 @@ void Game::handleEvents()
 	SDL_PumpEvents();
 }
 
-void Game::updateSequence(int& row, int& col)
+void Game::updateSequence(const int& row, const int& col)
 {
 	Pixel* pixel = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
 	if (pixel == nullptr)
@@ -144,55 +144,38 @@ void Game::updateSequence(int& row, int& col)
 	pixel->update(row, col, GlobalVariables::chunkSize, GlobalVariables::chunkSize, worldGeneration);
 }
 
-void Game::worker(Vector2D<int> globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords)
-{
-	// Calculate the boundaries of the current chunk
-
-
-	int chunkOffsetX = globalChunk.x * GlobalVariables::chunkSize;
-	int chunkOffsetY = globalChunk.y * GlobalVariables::chunkSize;
-	int rowStart = chunkOffsetX + (startingChunkRow * chunkSizeX);
-	int colStart = chunkOffsetY + (startingChunkCol * chunkSizeY);
-	int rowEnd = std::min(rowStart + chunkSizeY, GlobalVariables::chunkSize * 2);
-	int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::chunkSize * 2);
-	if (std::abs(colEnd - playerCoords.x) > 150 || std::abs(rowEnd - playerCoords.y) > 150) return;
-	if (std::abs(colStart - playerCoords.x) > 150 || std::abs(rowStart - playerCoords.y) > 150) return;
-
-	// Update the 8x8 chunk
-	for (int row = rowStart; row < rowEnd; ++row)
-	{
-		for (int col = colStart; col < colEnd; ++col)
-		{
-			if (std::abs(col - playerCoords.x) > 150 || std::abs(row - playerCoords.y) > 150) continue;
-			updateSequence(row, col);
-		}
-	}
-}
-void Game::ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords)
-{
+void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords) {
 	std::vector<std::future<void>> futures;
 
-	int batchSize = std::max(1, numChunksY / 2);
-	for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2)
-	{
-		for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2)
-		{
-			futures.push_back(threads.enqueue([this, globalChunk, rowChunk, colChunk, playerCoords]()
-				{
-					this->worker(globalChunk, rowChunk, colChunk, playerCoords);
-				}));
+	// iterating over the 8x8 sub-chunks
+	for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2) {
+		for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2) {
+			// Calculate the boundaries of the current 8x8 chunk
+			int rowStart = globalChunk.y * GlobalVariables::chunkSize + (rowChunk * chunkSizeY);
+			int colStart = globalChunk.x * GlobalVariables::chunkSize + (colChunk * chunkSizeX);
+			int rowEnd = std::min(rowStart + chunkSizeY, GlobalVariables::chunkSize * 2);
+			int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::chunkSize * 2);
 
-			if (futures.size() >= batchSize) {
-				for (auto& future : futures) future.get();
-				futures.clear();
+			// Perform the distance check for the entire 8x8 chunk
+			float closestX = std::max((float)colStart, std::min(playerCoords.x, (float)colEnd));
+			float closestY = std::max((float)rowStart, std::min(playerCoords.y, (float)rowEnd));
+			float distance = std::sqrt(std::pow(playerCoords.x - closestX, 2) + std::pow(playerCoords.y - closestY, 2));
+
+			if (distance > 150.0f) {
+				continue;
+			}
+
+			for (int row = rowStart; row < rowEnd; ++row) {
+				for (int col = colStart; col < colEnd; ++col) {
+					updateSequence(row, col);
+				}
 			}
 		}
 	}
-
-	// Wait for remaining tasks to finish
-	for (auto& future : futures) future.get();
 }
+void Game::ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords) {
 
+}
 
 void Game::update()
 {
@@ -210,10 +193,10 @@ void Game::update()
 	for (auto& mapEntry : chunks) {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;
-		ChunkUpdateSkipping(globalCoords, 1, 1, playerCoords);
-		ChunkUpdateSkipping(globalCoords, 1, 0, playerCoords);
-		ChunkUpdateSkipping(globalCoords, 0, 1, playerCoords);
-		ChunkUpdateSkipping(globalCoords, 0, 0, playerCoords);
+		worker(globalCoords, 1, 1, playerCoords);
+		worker(globalCoords, 1, 0, playerCoords);
+		worker(globalCoords, 0, 1, playerCoords);
+		worker(globalCoords, 0, 0, playerCoords);
 	}
 	player->update(Rendering::getRenderer(), worldGeneration);
 	worldGeneration.clearPixelProcessed();

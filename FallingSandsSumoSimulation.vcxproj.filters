@@ -137,6 +137,9 @@
     <Image Include="assets\rickroll.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="cppFallingSands-master\Sprites\AnimationSheet_Character.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cppFallingSands-master\src\main.cpp">

@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\rickroll.png" />
+    <Image Include="cppFallingSands-master\Sprites\AnimationSheet_Character.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Gas.cpp" />
