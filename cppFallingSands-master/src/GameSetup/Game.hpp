@@ -32,7 +32,6 @@ class Rendering;
 class Player;
 class Sprite;
 #include "World/WorldGeneration.hpp"
-#include "../Utility/ThreadPool.hpp"
 class Chunk;
 
 class Game {

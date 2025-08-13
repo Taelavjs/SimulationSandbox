@@ -221,6 +221,7 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	Chunk& ch1 = worldVecStore[chunkCoord1];
 	Chunk& ch2 = worldVecStore[chunkCoord2];
 	ch1.getDirtyRect().expand(localCoord1.x, localCoord1.y);
+	ch2.getDirtyRect().expand(localCoord2.x, localCoord2.y);
 	// Check if chunks are empty, although the find() check above should handle this
 	if (ch1.size() == 0 || ch2.size() == 0) {
 		return;

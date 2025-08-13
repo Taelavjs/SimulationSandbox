@@ -34,6 +34,7 @@ private:
 	static int offsetY;
 	static uint32_t blackColor;
 	static uint32_t redColor;
+
 };
 
 #endif /* RENDERING_HPP */

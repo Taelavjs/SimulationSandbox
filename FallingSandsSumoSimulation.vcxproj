@@ -157,10 +157,10 @@
     <ClInclude Include="cppFallingSands-master\src\Textures\SpriteSheet.hpp" />
     <ClInclude Include="cppFallingSands-master\src\Utility\GlobalVariables.hpp" />
     <ClInclude Include="cppFallingSands-master\src\Utility\ProceduralTerrainGen.hpp" />
-    <ClInclude Include="cppFallingSands-master\src\Utility\ThreadPool.hpp" />
     <ClInclude Include="cppFallingSands-master\src\Utility\Velocity.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SubChunkBoundingBox.hpp" />
+    <ClInclude Include="ThreadPool.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDL2 Template.rc" />

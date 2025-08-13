@@ -141,10 +141,10 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	}
 
 	dirtyRect.reset();
-	const SDL_Rect& AABB = player->getPlayerRect();
-	Rendering::offsetX = AABB.x - 5;
-	Rendering::offsetY = AABB.y - 1;
-	SDL_Rect dstRect = { ((GlobalVariables::chunkSize / 2) - Rendering::offsetX) + globalOffputX,((GlobalVariables::chunkSize / 2) - Rendering::offsetY) + globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize };
+	//const SDL_Rect& AABB = player->getPlayerRect();
+	//Rendering::offsetX = AABB.x - 5;
+	//Rendering::offsetY = AABB.y - 1;
+	SDL_Rect dstRect = { ((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize };
 
 	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
