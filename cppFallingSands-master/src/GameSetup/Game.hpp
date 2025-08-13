@@ -47,8 +47,7 @@ private:
 	// int rendererScaley;
 	bool isRunning;
 	WorldGeneration worldGeneration;
-	const int chunkSizeX = 8;
-	const int chunkSizeY = 8;
+
 	int numChunksX;
 	int numChunksY;
 	Player* player;

@@ -25,3 +25,4 @@ Vector2D<int> Chunk::getGlobalCoords() {
 	return globalCoords;
 }
 
+

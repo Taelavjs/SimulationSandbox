@@ -82,13 +82,13 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
 	int z = 0;
 	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
-
+	const Vector2D<float>& playerCoords = player->getCoordinates();
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 	{
+		if (std::abs(row + globalOffputY - playerCoords.y) > 300) continue;
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
 		{
-			if (std::abs(row + globalOffputY - player->getCoordinates().y) > 100) continue;
-			if (std::abs(col + globalOffputX - player->getCoordinates().x) > 100) continue;
+			if (std::abs(col + globalOffputX - playerCoords.x) > 300) continue;
 			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : pixels[row * GlobalVariables::chunkSize + col];
 
 			pixels[row * GlobalVariables::chunkSize + col] = color;
@@ -101,7 +101,7 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 
 	}
 
-	SDL_Rect AABB = player->getPlayerRect();
+	const SDL_Rect& AABB = player->getPlayerRect();
 	Rendering::offsetX = AABB.x - 5;
 	Rendering::offsetY = AABB.y - 1;
 	SDL_Rect dstRect = { ((GlobalVariables::chunkSize / 2) - Rendering::offsetX) + globalOffputX,((GlobalVariables::chunkSize / 2) - Rendering::offsetY) + globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize };

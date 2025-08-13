@@ -28,16 +28,16 @@ public:
 	void playerReleaseHandler(SDL_Scancode e);
 	void renderPlayer(SDL_Renderer* renderer, int screenWidth);
 	void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
-	Vector2D<float> getCoordinates() {
+	const Vector2D<float>& getCoordinates() {
 		return position;
 	}
 
-	Vector2D<float> getDimensions() {
+	const Vector2D<float>& getDimensions() {
 		return playerScale;
 	}
 
 	void handleCollision(SDL_Rect* colliderRect);
-	SDL_Rect getPlayerRect() { return playerAABB; }
+	const SDL_Rect& getPlayerRect() { return playerAABB; }
 	std::stack<SDL_Rect> getStackRender() { return stckToRender; };
 	void playerForcesInputs();
 	void collisionHandler(WorldGeneration& worldGeneration);

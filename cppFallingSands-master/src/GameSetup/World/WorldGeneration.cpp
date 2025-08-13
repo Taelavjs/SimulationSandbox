@@ -157,12 +157,7 @@ std::unordered_map<Vector2D<int>, Chunk>& WorldGeneration::getVecStore() {
 }
 
 Vector2D<float> WorldGeneration::getGlobalCoordinates(Vector2D<float> position) {
-	Vector2D<float> result(0, 0);
-	result.x = std::floor(position.x / GlobalVariables::chunkSize);
-	result.y = std::floor(position.y / GlobalVariables::chunkSize);
-
-	std::cout << "Global Coordinates : " << result.x << " " << result.y << '\n';
-	return result;
+	return Vector2D<float>((position.x / GlobalVariables::chunkSize), (position.y / GlobalVariables::chunkSize));
 }
 
 Vector2D<int> WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY) {
@@ -176,6 +171,7 @@ Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 	}
 	return emptyChunk;
 }
+
 
 // Make the class able to give the correct chunk using global coordinates
 // Rather than swapping between global and local, much easier

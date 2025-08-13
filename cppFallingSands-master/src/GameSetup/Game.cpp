@@ -23,8 +23,8 @@ Game::Game()
 	SDL_GetKeyboardState(&numKeys);
 	prevKeys = new Uint8[numKeys];
 	SDL_PumpEvents();
-	numChunksX = GlobalVariables::chunkSize / chunkSizeX;
-	numChunksY = GlobalVariables::chunkSize / chunkSizeY;
+	numChunksX = GlobalVariables::chunkSize / GlobalVariables::subChunkSizeY;
+	numChunksY = GlobalVariables::chunkSize / GlobalVariables::subChunkSizeY;
 
 }
 
@@ -153,17 +153,17 @@ void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow,
 	for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2) {
 		for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2) {
 			// Calculate the boundaries of the current 8x8 chunk
-			int rowStart = globalChunk.y * GlobalVariables::chunkSize + (rowChunk * chunkSizeY);
-			int colStart = globalChunk.x * GlobalVariables::chunkSize + (colChunk * chunkSizeX);
-			int rowEnd = std::min(rowStart + chunkSizeY, GlobalVariables::chunkSize * 2);
-			int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::chunkSize * 2);
+			int rowStart = globalChunk.y * GlobalVariables::chunkSize + (rowChunk * GlobalVariables::subChunkSizeY);
+			int colStart = globalChunk.x * GlobalVariables::chunkSize + (colChunk * GlobalVariables::subChunkSizeY);
+			int rowEnd = std::min(rowStart + GlobalVariables::subChunkSizeY, GlobalVariables::chunkSize * 2);
+			int colEnd = std::min(colStart + GlobalVariables::subChunkSizeY, GlobalVariables::chunkSize * 2);
 
 			// Perform the distance check for the entire 8x8 chunk
 			float closestX = std::max((float)colStart, std::min(playerCoords.x, (float)colEnd));
 			float closestY = std::max((float)rowStart, std::min(playerCoords.y, (float)rowEnd));
 			float distance = std::sqrt(std::pow(playerCoords.x - closestX, 2) + std::pow(playerCoords.y - closestY, 2));
 
-			if (distance > 150.0f) {
+			if (distance > 200.0f) {
 				continue;
 			}
 
@@ -190,11 +190,12 @@ void Game::update()
 	// Without dirty reads/rights
 
 	// Current issues with fire ticks and check for getIsFlammable - Unsure why
-	const Vector2D playerCoords = player->getCoordinates();
+	const Vector2D<float>& playerCoords = player->getCoordinates();
 
 	for (auto& mapEntry : chunks) {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;
+
 		worker(globalCoords, 1, 1, playerCoords);
 		worker(globalCoords, 1, 0, playerCoords);
 		worker(globalCoords, 0, 1, playerCoords);
