@@ -4,6 +4,8 @@ SDL_Window* Rendering::window = nullptr;
 SDL_Renderer* Rendering::renderer = nullptr;
 int Rendering::offsetX = 0;
 int Rendering::offsetY = 0;
+uint32_t Rendering::blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
+uint32_t Rendering::redColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 0, 0, 255);
 
 void Rendering::setValues() {
 
@@ -69,8 +71,8 @@ void Rendering::castRays(uint32_t* pixels, SDL_Renderer* renderer, const std::ve
 }
 
 void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoords) {
-	int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
-	int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
+	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
+	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
 
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
 	if (texture == nullptr)
@@ -79,19 +81,21 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 		return;
 	}
 	uint32_t* pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
-	uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
+
 	int z = 0;
 	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
 	const Vector2D<float>& playerCoords = player->getCoordinates();
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 	{
 		if (std::abs(row + globalOffputY - playerCoords.y) > 300) continue;
+
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
 		{
 			if (std::abs(col + globalOffputX - playerCoords.x) > 300) continue;
-			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : pixels[row * GlobalVariables::chunkSize + col];
+			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : blackColor;
 
 			pixels[row * GlobalVariables::chunkSize + col] = color;
+			Rendering::ShowSubchunks(pixels, row, col);
 
 			if (vec[row][col] == nullptr)
 				continue;
@@ -100,7 +104,6 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 		}
 
 	}
-
 	const SDL_Rect& AABB = player->getPlayerRect();
 	Rendering::offsetX = AABB.x - 5;
 	Rendering::offsetY = AABB.y - 1;
@@ -110,6 +113,10 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 	delete[] pixels;
 	SDL_DestroyTexture(texture);
+}
+
+void Rendering::ShowSubchunks(uint32_t* pixels, const int& row, const int& col) {
+	if (row % GlobalVariables::subChunkSizeX == 0 || col % GlobalVariables::subChunkSizeX == 0) pixels[row * GlobalVariables::chunkSize + col] = redColor;
 }
 
 void Rendering::renderPlayer(Player* player) {

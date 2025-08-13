@@ -23,7 +23,7 @@ public:
 	static void setValues();
 	static void renderPlayer(Player* player);
 	static void showRendering();
-
+	static void ShowSubchunks(uint32_t* pixels, const int& row, const int& col);
 private:
 
 	Rendering();
@@ -32,6 +32,8 @@ private:
 	static SDL_Renderer* renderer;
 	static int offsetX;
 	static int offsetY;
+	static uint32_t blackColor;
+	static uint32_t redColor;
 };
 
 #endif /* RENDERING_HPP */
