@@ -160,6 +160,7 @@
     <ClInclude Include="cppFallingSands-master\src\Utility\ThreadPool.hpp" />
     <ClInclude Include="cppFallingSands-master\src\Utility\Velocity.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SubChunkBoundingBox.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDL2 Template.rc" />
@@ -202,6 +203,7 @@
     <ClCompile Include="cppFallingSands-master\src\Textures\SpriteSheet.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Utility\ProceduralTerrainGen.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Utility\Velocity.cpp" />
+    <ClCompile Include="SubChunkBoundingBox.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

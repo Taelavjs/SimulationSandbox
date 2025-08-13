@@ -9,8 +9,8 @@ public:
 	const static inline int chunkSize{ 32 };
 	const static inline int rendererScale{ 3 };
 	const static inline std::string title{ "NoitaB" };
-	const static inline int subChunkSizeX = 32;
-	const static inline int subChunkSizeY = 32;
+	const static inline int subChunkSizeX = 16;
+	const static inline int subChunkSizeY = 16;
 	static inline double getDeltaTime() {
 		return deltaTime;
 	}
