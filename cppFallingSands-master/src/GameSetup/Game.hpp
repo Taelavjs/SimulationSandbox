@@ -52,13 +52,9 @@ public:
 	void updateSequence(const int& row, const int& col);
 	void pixelsToBlocks(std::vector<float> pixels);
 	void ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
-	void worker(
-		const Vector2D<int>& globalChunk,
-		const std::vector<SubChunkBoundingBox>& subchunkGroup,
-		const Vector2D<float>& playerCoords
-	);
+	void worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
+
 	void generateCorridors(std::vector<float> pixels);
-	std::vector<std::vector<SubChunkBoundingBox>> precalculate_groups();
 private:
 	// int rendererScalex;
 	// int rendererScaley;

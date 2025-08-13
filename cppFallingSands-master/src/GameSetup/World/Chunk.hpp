@@ -4,12 +4,15 @@
 #define CHUNK
 #include "../../Utility/Velocity.hpp"
 #include <vector>
+#include "../../../../SubChunkBoundingBox.hpp"
 class Pixel;
 
 class Chunk {
 public:
 	Chunk();
 	Chunk(Vector2D<int> chunkGlobalCoords, std::vector<std::vector<Pixel*>> chunkVec);
+
+
 	~Chunk();
 	Vector2D<int> getGlobalCoords();
 	std::vector<Pixel*>& operator[](int x) {
@@ -23,10 +26,12 @@ public:
 		return (int)vec[0].size();
 	}
 
+	chunkBoundingBox& getDirtyRect() { return dirtyRec; };
+
 private:
 	std::vector<std::vector<Pixel*>> vec;
 	Vector2D<int> globalCoords;
-
+	chunkBoundingBox dirtyRec;
 };
 
 #endif /* CHUNK */

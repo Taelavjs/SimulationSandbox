@@ -104,6 +104,43 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 		}
 
 	}
+	// The green color we will use for the border (Opaque Green).
+	const uint32_t greenColor = 0xFF00FF00;
+
+	// --- Start of new logic to draw the dirty rect border ---
+	chunkBoundingBox& dirtyRect = vec.getDirtyRect();
+	if (dirtyRect.getIsDirty()) {
+		int minX = dirtyRect.getMinX();
+		int minY = dirtyRect.getMinY();
+		int maxX = dirtyRect.getMaxX();
+		int maxY = dirtyRect.getMaxY();
+
+		// Loop to draw the top and bottom borders
+		for (int x = minX; x < maxX; ++x) {
+			// Top border
+			if (minY >= 0 && minY < GlobalVariables::chunkSize) {
+				pixels[minY * GlobalVariables::chunkSize + x] = greenColor;
+			}
+			// Bottom border
+			if (maxY >= 0 && maxY < GlobalVariables::chunkSize) {
+				pixels[maxY * GlobalVariables::chunkSize + x] = greenColor;
+			}
+		}
+
+		// Loop to draw the left and right borders
+		for (int y = minY; y < maxY; ++y) {
+			// Left border
+			if (minX >= 0 && minX < GlobalVariables::chunkSize) {
+				pixels[y * GlobalVariables::chunkSize + minX] = greenColor;
+			}
+			// Right border
+			if (maxX >= 0 && maxX < GlobalVariables::chunkSize) {
+				pixels[y * GlobalVariables::chunkSize + maxX] = greenColor;
+			}
+		}
+	}
+
+	dirtyRect.reset();
 	const SDL_Rect& AABB = player->getPlayerRect();
 	Rendering::offsetX = AABB.x - 5;
 	Rendering::offsetY = AABB.y - 1;

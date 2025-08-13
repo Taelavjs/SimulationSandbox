@@ -202,8 +202,8 @@ void WorldGeneration::clearPixelProcessed() {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D<int> globalCoords = mapEntry.first;
 
-		for (int i = 0; i < vec2D.size(); i++) {
-			for (int j = 0; j < vec2D[i].size(); j++) {
+		for (int i = 0; i < GlobalVariables::chunkSize; i++) {
+			for (int j = 0; j < GlobalVariables::chunkSize; j++) {
 				Pixel*& pix = vec2D[i][j];
 				if (pix != nullptr) {
 					pix->setProcessed(false);
@@ -239,7 +239,8 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 
 	Chunk& ch1 = worldVecStore[chunkCoord1];
 	Chunk& ch2 = worldVecStore[chunkCoord2];
-
+	ch1.getDirtyRect().expand(localCoord1.x, localCoord1.y);
+	ch2.getDirtyRect().expand(localCoord2.x, localCoord2.y);
 	// Check if chunks are empty, although the find() check above should handle this
 	if (ch1.size() == 0 || ch2.size() == 0) {
 		return;
@@ -257,6 +258,8 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	Pixel* temp = ch1[localCoord1.y][localCoord1.x];
 	ch1[localCoord1.y][localCoord1.x] = ch2[localCoord2.y][localCoord2.x];
 	ch2[localCoord2.y][localCoord2.x] = temp;
+
+
 }
 
 void WorldGeneration::burntSmoke(const int row, const int col) {
