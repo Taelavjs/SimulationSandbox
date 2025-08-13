@@ -1,4 +1,5 @@
 #include "SubChunkBoundingBox.hpp"
+#include <utility>
 
 SubChunkBoundingBox::SubChunkBoundingBox(int rowStart, int rowEnd, int colStart, int colEnd)
 	:subChunkRowStart(rowStart), subChunkColStart(colStart), subChunkRowEnd(rowEnd), subChunkColEnd(colEnd),
@@ -22,18 +23,16 @@ void SubChunkBoundingBox::updateSubChunk() {
 void SubChunkBoundingBox::updateNextBoundingBox(
 	int rS, int rE, int cS, int cE
 ) {
-	if (subChunkRowStart == -1) {
+	if (nextSubRowStart == -1) {
 		nextSubRowStart = rS;
 		nextSubRowEnd = rE;
 		nextSubColStart = cS;
 		nextSubColEnd = cE;
-		return;
 	}
-
-	if (rS < subChunkRowStart) nextSubRowStart = rS;
-	if (rE > subChunkRowStart) nextSubRowEnd = rE;
-	if (cS < subChunkRowStart) nextSubColStart = cS;
-	if (cE > subChunkRowStart) nextSubColEnd = cE;
-
-	return;
+	else {
+		nextSubRowStart = std::min(nextSubRowStart, rS);
+		nextSubRowEnd = std::max(nextSubRowEnd, rE);
+		nextSubColStart = std::min(nextSubColStart, cS);
+		nextSubColEnd = std::max(nextSubColEnd, cE);
+	}
 }
