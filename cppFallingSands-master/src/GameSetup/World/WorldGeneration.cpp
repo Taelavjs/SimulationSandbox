@@ -31,18 +31,13 @@ WorldGeneration::~WorldGeneration() {
 
 void WorldGeneration::generateBlock() {
 	std::vector<std::vector<Pixel*>> vec(GlobalVariables::chunkSize, std::vector<Pixel*>(GlobalVariables::chunkSize));
-	worldVecStore[Vector2D(0, 0)] = Chunk(Vector2D(0, 0), vec);
-	worldVecStore[Vector2D(0, 1)] = Chunk(Vector2D(0, 1), vec);
-	worldVecStore[Vector2D(0, 2)] = Chunk(Vector2D(0, 2), vec);
-	worldVecStore[Vector2D(1, 0)] = Chunk(Vector2D(1, 0), vec);
-	worldVecStore[Vector2D(1, 1)] = Chunk(Vector2D(1, 1), vec);
-	worldVecStore[Vector2D(1, 2)] = Chunk(Vector2D(1, 2), vec);
-	worldVecStore[Vector2D(2, 0)] = Chunk(Vector2D(2, 0), vec);
-	worldVecStore[Vector2D(2, 1)] = Chunk(Vector2D(2, 1), vec);
-	worldVecStore[Vector2D(2, 2)] = Chunk(Vector2D(2, 2), vec);
+	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
+		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
+			worldVecStore[Vector2D(i, j)] = Chunk(Vector2D(i, j), vec);
+		}
+	}
 
-	//std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * 2, 2 * GlobalVariables::chunkSize);
-	std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize * 2, 2 * GlobalVariables::chunkSize);
+	std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
 		Chunk& chunk = mapEntry.second;
@@ -83,7 +78,7 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D<int> wor
 		{
 			int globalRow = chunkStartY + row;
 			int globalCol = chunkStartX + col;
-			const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * 2) + (globalCol)];
+			const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) + (globalCol)];
 			if (pixValue > -0.2f)
 			{
 				vec[row][col] = rock->clone();
