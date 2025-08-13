@@ -86,7 +86,7 @@ void Player::checkAreaCollision(bool& isBlockInPlayer, std::vector<SDL_Rect>& co
 		for (int i = position.x + 3; i < position.x - 3 + playerScale.x; ++i) {
 			for (int j = position.y; j < position.y + playerScale.y; ++j) {
 				SDL_Rect cube = { i, j, 1, 1 };
-				if (!(i >= 0 && j >= 0 && j < (GlobalVariables::chunkSize * 2) - 1 && i < (GlobalVariables::chunkSize * 2) - 1)) {
+				if (!(i >= 0 && j >= 0 && j < (GlobalVariables::chunkSize * 3) - 1 && i < (GlobalVariables::chunkSize * 3) - 1)) {
 					continue;
 				}
 

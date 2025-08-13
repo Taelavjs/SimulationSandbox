@@ -1,40 +1,37 @@
 #include "ProceduralTerrainGen.hpp"
 #include <random>
 
-std::vector<float> ProceduralTerrainGen::createNoise(int w, int h) {
-	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	noise.SetFrequency(0.3f);
-	std::random_device rd;     // Only used once to initialise (seed) engine
-	std::mt19937 rng(rd());    // Random-number engine used (Mersenne-Twister in this case)
-	std::uniform_int_distribution<int> uni(0, 99999); // Guaranteed unbiased
-
-	auto random_integer = uni(rng);
-	noise.SetSeed(random_integer);
-
-	noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
-	noise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
-	noise.SetCellularJitter(1.9f);
-	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-	noise.SetFractalLacunarity(0.36f);
-	noise.SetFractalWeightedStrength(1000.0f);
-	noise.SetFractalOctaves(4);
-	noise.SetFractalGain(6.3f);
-
-
-	// Gather noise data
-	std::vector<float> noiseData(w * 4 * h);
+std::vector<float> ProceduralTerrainGen::gatherNoiseData(FastNoiseLite& noise, int w, int h) {
+	// Correct vector size for a w x h grid
+	std::vector<float> noiseData(w * h);
 	int index = 0;
 
-	for (int y = 0; y < w * 2; y++)
-	{
-		for (int x = 0; x < h * 2; x++)
-		{
+	// Correct loop boundaries for a w x h grid
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
 			noiseData[index++] = noise.GetNoise((float)x, (float)y);
 		}
 	}
-
 	return noiseData;
+}
+
+std::vector<float> ProceduralTerrainGen::createNoise(int w, int h) {
+	FastNoiseLite noise;
+	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	noise.SetFrequency(0.05f); // Reduced frequency for more organic shapes
+
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> uni(0, 99999);
+	auto random_integer = uni(rng);
+	noise.SetSeed(random_integer);
+
+	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
+	noise.SetFractalOctaves(5); // Increased octaves for more detail
+	noise.SetFractalLacunarity(2.0f); // More standard value
+	noise.SetFractalGain(0.5f); // More standard value
+
+	return gatherNoiseData(noise, w, h);
 }
 
 std::vector<float> ProceduralTerrainGen::createTerrain(int w, int h) {
@@ -42,35 +39,16 @@ std::vector<float> ProceduralTerrainGen::createTerrain(int w, int h) {
 	noise2.SetNoiseType(FastNoiseLite::NoiseType_Value);
 	noise2.SetFrequency(0.05f);
 
-
-	noise2.SetSeed(31231);
-	noise2.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
-	noise2.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
-	noise2.SetCellularJitter(1.9);
-	noise2.SetDomainWarpType(FastNoiseLite::DomainWarpType_OpenSimplex2);
-	noise2.SetDomainWarpAmp(1.0f);
+	noise2.SetSeed(31231); // Kept hardcoded seed for consistent corridors
 	noise2.SetFractalType(FastNoiseLite::FractalType_DomainWarpIndependent);
-	noise2.SetFractalLacunarity(1.920f);
 	noise2.SetFractalOctaves(3);
+	noise2.SetFractalLacunarity(1.920f);
 	noise2.SetFractalGain(2.180f);
+	noise2.SetDomainWarpType(FastNoiseLite::DomainWarpType_OpenSimplex2);
+	noise2.SetDomainWarpAmp(30.0f); // Increased amplitude for more significant warping
 
-
-	// Gather noise data
-	std::vector<float> noiseData(w * 4 * h);
-	int index = 0;
-
-	for (int y = 0; y < w * 2; y++)
-	{
-		for (int x = 0; x < h * 2; x++)
-		{
-			noiseData[index++] = noise2.GetNoise((float)x, (float)y);
-		}
-	}
-
-	return noiseData;
+	return gatherNoiseData(noise2, w, h);
 }
-
-
 
 
 // void ProceduralTerrainGen::iterThroughPixels(void (*func)(int &, int &, uint32_t *, uint32_t *), uint32_t *pixels, uint32_t *newPixels){

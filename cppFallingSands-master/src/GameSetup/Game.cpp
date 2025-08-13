@@ -131,7 +131,7 @@ void Game::updateSequence(const int& row, const int& col)
 			return;
 		};
 	}
-	pixel->update(row, col, GlobalVariables::chunkSize, GlobalVariables::chunkSize, worldGeneration);
+	pixel->update(row, col, GlobalVariables::chunkSize * 2, GlobalVariables::chunkSize * 2, worldGeneration);
 }
 
 void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords, chunkBoundingBox& box) {

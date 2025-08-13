@@ -1,19 +1,14 @@
-#ifndef PROCEDURALTERRAINGEN
-#define PROCEDURALTERRAINGEN
-#include <iostream>
-#include <vector>
-#include "FastNoiseLite.h"
-class ProceduralTerrainGen {
-private:
-	ProceduralTerrainGen();
-public:
-	~ProceduralTerrainGen();
+#pragma once
 
+#include "FastNoiseLite.h"
+#include <vector>
+
+class ProceduralTerrainGen {
+public:
 	static std::vector<float> createNoise(int w, int h);
 	static std::vector<float> createTerrain(int w, int h);
 
-	//void iterThroughPixels(void (*func)(int &, int &, uint32_t *, uint32_t *), uint32_t *pixels, uint32_t *newPixels);
-
+private:
+	static std::vector<float> gatherNoiseData(FastNoiseLite& noise, int w, int h);
 };
 
-#endif /* PROCEDURALTERRAINGEN */

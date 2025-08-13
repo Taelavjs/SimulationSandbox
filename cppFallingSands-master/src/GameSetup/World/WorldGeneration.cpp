@@ -33,16 +33,20 @@ void WorldGeneration::generateBlock() {
 	std::vector<std::vector<Pixel*>> vec(GlobalVariables::chunkSize, std::vector<Pixel*>(GlobalVariables::chunkSize));
 	worldVecStore[Vector2D(0, 0)] = Chunk(Vector2D(0, 0), vec);
 	worldVecStore[Vector2D(0, 1)] = Chunk(Vector2D(0, 1), vec);
+	worldVecStore[Vector2D(0, 2)] = Chunk(Vector2D(0, 2), vec);
 	worldVecStore[Vector2D(1, 0)] = Chunk(Vector2D(1, 0), vec);
 	worldVecStore[Vector2D(1, 1)] = Chunk(Vector2D(1, 1), vec);
+	worldVecStore[Vector2D(1, 2)] = Chunk(Vector2D(1, 2), vec);
+	worldVecStore[Vector2D(2, 0)] = Chunk(Vector2D(2, 0), vec);
+	worldVecStore[Vector2D(2, 1)] = Chunk(Vector2D(2, 1), vec);
+	worldVecStore[Vector2D(2, 2)] = Chunk(Vector2D(2, 2), vec);
 
-
-	std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize, GlobalVariables::chunkSize);
-	std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+	//std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * 2, 2 * GlobalVariables::chunkSize);
+	std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize * 2, 2 * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
 		Chunk& chunk = mapEntry.second;
-		pixelsToBlocks(noiseMap, mapEntry.first, chunk);
+		//pixelsToBlocks(noiseMap, mapEntry.first, chunk);
 		generateCorridors(terrainMap, mapEntry.first, chunk);
 	}
 }
@@ -105,24 +109,6 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D<int> 
 {
 	int chunkStartX = worldQuad.x * GlobalVariables::chunkSize;
 	int chunkStartY = worldQuad.y * GlobalVariables::chunkSize;
-	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
-	{
-		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
-		{
-			int globalRow = chunkStartY + row;
-			int globalCol = chunkStartX + col;
-			const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * 2) + (globalCol)];
-			if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
-			{
-				vec[row][col] = nullptr;
-			}
-			if (row < 30)
-			{
-				vec[row][col] = nullptr;
-			}
-		}
-	}
-
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 	{
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
@@ -240,7 +226,6 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	Chunk& ch1 = worldVecStore[chunkCoord1];
 	Chunk& ch2 = worldVecStore[chunkCoord2];
 	ch1.getDirtyRect().expand(localCoord1.x, localCoord1.y);
-	ch2.getDirtyRect().expand(localCoord2.x, localCoord2.y);
 	// Check if chunks are empty, although the find() check above should handle this
 	if (ch1.size() == 0 || ch2.size() == 0) {
 		return;
