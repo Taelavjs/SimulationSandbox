@@ -8,6 +8,7 @@
 #include <map>
 #include "Chunk.hpp"
 #include <math.h>       /* fmod */
+#include <unordered_map>
 class Chunk;
 class Napalm;
 class Oil;
@@ -27,7 +28,7 @@ public:
 	void generateCorridors(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);
 	Chunk& getLocalVec();
 	Vector2D<float> getGlobalCoordinates(Vector2D<float> position);
-	std::map<Vector2D<int>, Chunk>& getVecStore();
+	std::unordered_map<Vector2D<int>, Chunk>& getVecStore();
 	Vector2D<int> getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
 	Chunk& getChunk(Vector2D<float> chunkGlobalCoord);
 	Pixel*& getPixelFromGlobal(const Vector2D<int>& position);
@@ -35,7 +36,7 @@ public:
 	void swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2);
 	void burntSmoke(const int row, const int col);
 private:
-	std::map<Vector2D<int>, Chunk> worldVecStore;
+	std::unordered_map<Vector2D<int>, Chunk> worldVecStore;
 	Sand* sand;
 	Water* water;
 	Rock* rock;

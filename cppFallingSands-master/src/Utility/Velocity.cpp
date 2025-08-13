@@ -47,7 +47,7 @@ void Velocity::velocityTick() {
 }
 
 void Velocity::addForce(float vectorLength, float angle) {
-	float radianAngle = angle * (M_PI / 180.0f);
+	float radianAngle = (float)angle * (M_PI / 180.0f);
 	velocity.x += std::cos(radianAngle) * vectorLength * GlobalVariables::getDeltaTime();
 	velocity.y += std::sin(radianAngle) * vectorLength * GlobalVariables::getDeltaTime();
 

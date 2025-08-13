@@ -152,7 +152,7 @@ Chunk& WorldGeneration::getLocalVec() {
 	return worldVecStore[Vector2D(0, 0)];
 }
 
-std::map<Vector2D<int>, Chunk>& WorldGeneration::getVecStore() {
+std::unordered_map<Vector2D<int>, Chunk>& WorldGeneration::getVecStore() {
 	return worldVecStore;
 }
 
@@ -191,8 +191,9 @@ Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
 	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 
-	if (worldVecStore.find(chunkCoord) != worldVecStore.end()) {
-		return worldVecStore[chunkCoord][localCoord.y][localCoord.x];
+	auto chunkIt = worldVecStore.find(chunkCoord);
+	if (chunkIt != worldVecStore.end()) {
+		return chunkIt->second[localCoord.y][localCoord.x];
 	}
 
 	static Pixel* nullpixel = nullptr;

@@ -22,8 +22,19 @@ struct Vector2D {
 	bool operator==(const Vector2D<T>& other) const {
 		return (x == other.x) && (y == other.y);
 	}
-};
 
+
+};
+namespace std {
+	template<typename T>
+	struct hash<Vector2D<T>> {
+		size_t operator()(const Vector2D<T>& v) const {
+			size_t h1 = hash<T>{}(v.x);
+			size_t h2 = hash<T>{}(v.y);
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
 class Velocity {
 public:
 	Velocity();

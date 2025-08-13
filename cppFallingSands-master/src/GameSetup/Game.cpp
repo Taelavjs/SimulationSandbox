@@ -86,30 +86,30 @@ void Game::handleEvents()
 		{
 			setRunning(false);
 		}
-		else if (e[SDL_SCANCODE_A])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, water);
-		}
-		else if (e[SDL_SCANCODE_D])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, rock);
-		}
-		else if (e[SDL_SCANCODE_S])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, sand);
-		}
-		else if (e[SDL_SCANCODE_W])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, smoke);
-		}
-		else if (e[SDL_SCANCODE_Q])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, oil);
-		}
-		else if (e[SDL_SCANCODE_F])
-		{
-			SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, napalm);
-		}
+		//else if (e[SDL_SCANCODE_A])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, water);
+		//}
+		//else if (e[SDL_SCANCODE_D])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, rock);
+		//}
+		//else if (e[SDL_SCANCODE_S])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, sand);
+		//}
+		//else if (e[SDL_SCANCODE_W])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, smoke);
+		//}
+		//else if (e[SDL_SCANCODE_Q])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, oil);
+		//}
+		//else if (e[SDL_SCANCODE_F])
+		//{
+		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, napalm);
+		//}
 
 		for (int i = 0; i < numKeys; ++i) {
 			if (e[i] == 1) {
@@ -122,7 +122,9 @@ void Game::handleEvents()
 			player->playerReleaseHandler((SDL_Scancode)i);
 		}
 	}
-	memcpy(prevKeys, e, numKeys);
+	if (numKeys > 0) {
+		memcpy(prevKeys, e, numKeys);
+	}
 	SDL_PumpEvents();
 }
 
@@ -182,7 +184,7 @@ void Game::update()
 	Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
 
 	Vector2D dimensions = player->getDimensions();
-	std::map<Vector2D<int>, Chunk>& chunks = worldGeneration.getVecStore();
+	std::unordered_map<Vector2D<int>, Chunk>& chunks = worldGeneration.getVecStore();
 	// Runs over each chunk, specifying what sub chunk the X and Y update sequence should start at
 	// It allows for no two chunks directly next to each other to be updating at the same time, allowing for multicore processing
 	// Without dirty reads/rights
@@ -205,7 +207,7 @@ void Game::update()
 
 void Game::render()
 {
-	std::map<Vector2D<int>, Chunk>& temp = worldGeneration.getVecStore();
+	std::unordered_map<Vector2D<int>, Chunk>& temp = worldGeneration.getVecStore();
 	for (auto& mapEntry : temp) {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;

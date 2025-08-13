@@ -10,7 +10,7 @@ public:
 	const static inline int rendererScale{ 3 };
 	const static inline std::string title{ "NoitaB" };
 
-	static inline float getDeltaTime() {
+	static inline double getDeltaTime() {
 		return deltaTime;
 	}
 
