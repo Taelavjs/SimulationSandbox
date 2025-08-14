@@ -6,9 +6,9 @@
 class GlobalVariables {
 public:
 	const static inline int fps{ 60 };
-	const static inline int chunkSize{ 16 };
-	const static inline int worldChunkWidth{ 22 };
-	const static inline int rendererScale{ 2 };
+	const static inline int chunkSize{ 30 };
+	const static inline int worldChunkWidth{ 15 };
+	const static inline int rendererScale{ 3 };
 	const static inline std::string title{ "NoitaB" };
 	const static inline int subChunkSizeX = 16;
 	const static inline int subChunkSizeY = 16;

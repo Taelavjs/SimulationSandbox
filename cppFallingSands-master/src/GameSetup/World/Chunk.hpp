@@ -17,7 +17,7 @@ public:
 	Chunk& operator=(Chunk&& other) noexcept;
 
 	void render(SDL_Renderer* renderer, const SDL_Rect& playerRect);
-	Vector2D<int> getGlobalCoords();
+	const Vector2D<int>& getGlobalCoords();
 	std::vector<Pixel*>& operator[](int x);
 	void CreateBaseTexture(SDL_Renderer* renderer);
 

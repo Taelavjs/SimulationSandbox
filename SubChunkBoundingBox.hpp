@@ -8,11 +8,11 @@ public:
 
 	void reset();
 
-	int getMinX() const;
-	int getMinY() const;
-	int getMaxX() const;
-	int getMaxY() const;
-	bool getIsDirty() const;
+	const int& getMinX() const;
+	const int& getMinY() const;
+	const int& getMaxX() const;
+	const int& getMaxY() const;
+	const bool& getIsDirty() const;
 
 private:
 	void resetWorkingRect();

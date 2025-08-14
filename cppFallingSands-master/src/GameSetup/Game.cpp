@@ -141,7 +141,7 @@ void Game::updateSequence(const int& row, const int& col)
 	pixel->update(row, col, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, worldGeneration);
 }
 
-void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords, chunkBoundingBox& box) {
+void Game::worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box) {
 	int minRow = box.getMinY();
 	int maxRow = box.getMaxY();
 	int minCol = box.getMinX();
@@ -177,10 +177,7 @@ void Game::update() {
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;
 
-		worker(globalCoords, 1, 1, playerCoords, vec2D.getDirtyRect());
-		worker(globalCoords, 1, 0, playerCoords, vec2D.getDirtyRect());
-		worker(globalCoords, 0, 1, playerCoords, vec2D.getDirtyRect());
-		worker(globalCoords, 0, 0, playerCoords, vec2D.getDirtyRect());
+		worker(globalCoords, playerCoords, vec2D.getDirtyRect());
 	}
 	player->update(Rendering::getRenderer(), worldGeneration);
 	worldGeneration.clearPixelProcessed();

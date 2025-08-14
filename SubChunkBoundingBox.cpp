@@ -28,11 +28,11 @@ void chunkBoundingBox::reset() {
 	resetWorkingRect();
 }
 
-int chunkBoundingBox::getMinX() const { return minX; }
-int chunkBoundingBox::getMinY() const { return minY; }
-int chunkBoundingBox::getMaxX() const { return maxX; }
-int chunkBoundingBox::getMaxY() const { return maxY; }
-bool chunkBoundingBox::getIsDirty() const { return isDirty; }
+const int& chunkBoundingBox::getMinX() const { return minX; }
+const int& chunkBoundingBox::getMinY() const { return minY; }
+const int& chunkBoundingBox::getMaxX() const { return maxX; }
+const int& chunkBoundingBox::getMaxY() const { return maxY; }
+const bool& chunkBoundingBox::getIsDirty() const { return isDirty; }
 
 void chunkBoundingBox::resetWorkingRect() {
 	wminX = GlobalVariables::chunkSize;

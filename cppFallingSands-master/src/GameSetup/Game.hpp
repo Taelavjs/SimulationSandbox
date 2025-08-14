@@ -36,7 +36,7 @@ public:
 	void updateSequence(const int& row, const int& col);
 	void pixelsToBlocks(std::vector<float> pixels);
 	void ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
-	void worker(const Vector2D<int>& globalChunk, const int& startingChunkRow, const int& startingChunkCol, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
+	void worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
 
 	void generateCorridors(std::vector<float> pixels);
 private:
