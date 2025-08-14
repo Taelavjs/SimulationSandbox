@@ -29,7 +29,7 @@ public:
 	bool getProcessed();
 	int getMass();
 	bool getOnFire();
-	uint32_t getColour();
+	virtual uint32_t getColour();
 	double getChanceToIgnite();
 	int getHp();
 	int getDensity();

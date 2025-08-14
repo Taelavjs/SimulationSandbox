@@ -55,10 +55,12 @@ int main(int argc, char* argv[])
 	{
 		system_timer.tick();
 		accumulated_seconds += system_timer.elapsed_seconds;
-		GlobalVariables::setDeltaTime(accumulated_seconds);
 
 
 		if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
+			GlobalVariables::setDeltaTime(accumulated_seconds);
+			accumulated_seconds = -timeBetweenFrames;
+
 			i++;
 			// Events
 			game.handleEvents();
@@ -66,7 +68,6 @@ int main(int argc, char* argv[])
 			game.update();
 			// Render
 			game.render();
-			accumulated_seconds = -timeBetweenFrames;
 		}
 	}
 

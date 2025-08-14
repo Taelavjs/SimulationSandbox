@@ -9,7 +9,7 @@ public:
 	virtual Pixel* clone() const;
 
 public:
-	virtual uint32_t getColour();
+	uint32_t getColour() override;
 
 };
 
