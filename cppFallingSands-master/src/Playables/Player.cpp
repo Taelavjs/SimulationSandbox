@@ -110,7 +110,7 @@ void Player::checkAreaCollision(bool& isBlockInPlayer, std::vector<SDL_Rect>& co
 					continue;
 				}
 
-				Pixel* blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
+				Pixel*& blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
 				if (blockToCheck != nullptr && blockToCheck->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)) {
 					collisions.push_back(cube);
 					isBlockInPlayer = true;
@@ -147,7 +147,7 @@ void Player::collisionHandler(WorldGeneration& worldGeneration)
 				if (!(i > 0 && j > 0 && j < (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) - 1 && i < (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) - 1)) continue;
 				SDL_Rect cube = { i, j, 1, 1 };
 				stckToRender.push(cube);
-				Pixel* blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
+				Pixel*& blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
 
 				if (blockToCheck != nullptr && blockToCheck->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &col)) {
 					wasGrounded = true;

@@ -58,7 +58,7 @@ void SquarePlace(Chunk& vec, int x, int y, Pixel* elm)
 	{
 		for (int k = y - numToPlace; k < y + numToPlace; k++)
 		{
-			if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size())
+			if (j < 0 || k < 0 || k >= GlobalVariables::chunkSize || j >= GlobalVariables::chunkSize)
 				continue;
 			// if(rand() % 2 == 0) continue;
 
@@ -147,10 +147,10 @@ void Game::worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playe
 	int minCol = box.getMinX();
 	int maxCol = box.getMaxX();
 	for (int row = globalChunk.y * GlobalVariables::chunkSize + minRow; row <= globalChunk.y * GlobalVariables::chunkSize + maxRow; ++row) {
-		int globalRow = globalChunk.y * GlobalVariables::chunkSize + row;
+		const Sint16 globalRow = globalChunk.y * GlobalVariables::chunkSize + row;
 
 		for (int col = globalChunk.x * GlobalVariables::chunkSize + minCol; col <= globalChunk.x * GlobalVariables::chunkSize + maxCol; ++col) {
-			int globalCol = globalChunk.x * GlobalVariables::chunkSize + col;
+			const Sint16 globalCol = globalChunk.x * GlobalVariables::chunkSize + col;
 
 			//float distance = std::sqrt(std::pow(playerCoords.x - globalCol, 2) + std::pow(playerCoords.y - globalRow, 2));
 
@@ -174,10 +174,9 @@ void Game::update() {
 	const Vector2D<float>& playerCoords = player->getCoordinates();
 
 	for (auto& mapEntry : chunks) {
-		Chunk& vec2D = mapEntry.second;
-		Vector2D globalCoords = mapEntry.first;
-
-		worker(globalCoords, playerCoords, vec2D.getDirtyRect());
+		auto& rec = mapEntry.second.getDirtyRect();
+		if (!isFirstRun && !rec.getIsDirty()) return;
+		worker(mapEntry.first, playerCoords, rec);
 	}
 	player->update(Rendering::getRenderer(), worldGeneration);
 	worldGeneration.clearPixelProcessed();
@@ -187,10 +186,21 @@ void Game::render()
 {
 	std::unordered_map<Vector2D<int>, Chunk>& temp = worldGeneration.getVecStore();
 	for (auto& mapEntry : temp) {
+
 		Chunk& vec2D = mapEntry.second;
 		Vector2D globalCoords = mapEntry.first;
+		auto& rect = vec2D.getDirtyRect();
+		if (!isFirstRun && !rect.getIsDirty()) {
+			rect.reset();
+			return;
+		}
+
 		Rendering::renderGrid(vec2D, player, globalCoords);
+		rect.reset();
+
 	}
+
+	isFirstRun == false;
 	Rendering::renderPlayer(player);
 	Rendering::showRendering();
 }

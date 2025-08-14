@@ -35,10 +35,16 @@ WorldGeneration::~WorldGeneration() {
 }
 
 void WorldGeneration::generateBlock() {
-	std::vector<std::vector<Pixel*>> vec(GlobalVariables::chunkSize, std::vector<Pixel*>(GlobalVariables::chunkSize));
 	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
 		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
-			worldVecStore[Vector2D(i, j)] = Chunk(Vector2D(i, j), vec);
+			Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize] = { nullptr };
+
+			// Constructs Key and value in place within the map
+			// Avoids creating and copying/deleting pointers within chunk
+			// Avoids chunk = opperator
+			worldVecStore.emplace(std::piecewise_construct,
+				std::forward_as_tuple(i, j),
+				std::forward_as_tuple(Vector2D(i, j)));
 		}
 	}
 
@@ -169,7 +175,6 @@ Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 // Rather than swapping between global and local, much easier
 
 Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
-	// GlobalVariables::chunkSize = GlobalVariables::screeenSize;
 	Vector2D<int> chunkCoord(0, 0);
 	Vector2D<int> localCoord(0, 0);
 
@@ -181,11 +186,12 @@ Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
 
 	auto chunkIt = worldVecStore.find(chunkCoord);
 	if (chunkIt != worldVecStore.end()) {
+		// Return a reference to the pointer
 		return chunkIt->second[localCoord.y][localCoord.x];
 	}
 
+	// Return a reference to a static null pointer for safety
 	static Pixel* nullpixel = nullptr;
-
 	return nullpixel;
 }
 
@@ -255,8 +261,15 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 }
 
 void WorldGeneration::burntSmoke(const int row, const int col) {
-	Pixel*& pixelPtr = getPixelFromGlobal(Vector2D(col, row));
-	delete pixelPtr;
-	pixelPtr = smoke->clone();
-	pixelPtr->setProcessed(true);
+	// Get a reference to the pointer in the world's data structure
+	Pixel*& pixelRef = getPixelFromGlobal(Vector2D(col, row));
+
+	// Delete the old pixel
+	delete pixelRef;
+
+	// Assign the new pixel to the same pointer reference
+	pixelRef = smoke->clone();
+
+	// Set the processed flag on the new pixel
+	pixelRef->setProcessed(true);
 }

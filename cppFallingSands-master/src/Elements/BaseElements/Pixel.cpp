@@ -41,7 +41,7 @@ bool Pixel::fireTick(WorldGeneration& worldGeneration, const int& row, const int
 				if (row + i > (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) - 1 || row + i < 0 || col + j >(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) - 1 || col + j < 0) continue;
 
 				// Grab necessary pixel from world space
-				Pixel* ptrToNeighbor = worldGeneration.getPixelFromGlobal(Vector2D(col + i, row + j));
+				Pixel*& ptrToNeighbor = worldGeneration.getPixelFromGlobal(Vector2D(col + i, row + j));
 				if (ptrToNeighbor != nullptr && ptrToNeighbor->getIsFlammable() && !ptrToNeighbor->getOnFire()) {
 					ptrToNeighbor->ignite();
 				}

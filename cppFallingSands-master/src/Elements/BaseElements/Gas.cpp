@@ -62,8 +62,8 @@ void Gas::update(int row, int col, const int& vecWidth, const int& vecHeight, Wo
 	while (moved && blocksFallen <= 2) {
 		moved = false;
 
-		Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
-		Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+		Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+		Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
 		bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsMoveable() && !leftPix->getIsGas() && !leftPix->getIsSolid()));
 		bool isRightValid = col + 1 < vecHeight * 2 && (rightPix == nullptr || (rightPix->getIsMoveable() && !rightPix->getIsGas() && !rightPix->getIsSolid()));

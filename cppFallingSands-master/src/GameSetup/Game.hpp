@@ -56,6 +56,7 @@ private:
 	Smoke* smoke;
 	Oil* oil;
 	Napalm* napalm;
+	bool isFirstRun{ true };
 };
 
 #endif // GAME_HPP

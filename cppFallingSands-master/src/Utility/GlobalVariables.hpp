@@ -1,17 +1,18 @@
-#include <string>
+
 #ifndef GLOBALVARIABLES
 
 #define GLOBALVARIABLES
-
+#include <string>
 class GlobalVariables {
 public:
-	const static inline int fps{ 60 };
-	const static inline int chunkSize{ 32 };
-	const static inline int worldChunkWidth{ 13 };
-	const static inline int rendererScale{ 3 };
-	const static inline std::string title{ "NoitaB" };
-	const static inline int subChunkSizeX = 16;
-	const static inline int subChunkSizeY = 16;
+	static const int fps;
+	const static inline int chunkSize{ 64 };
+	static const int worldChunkWidth;
+	static const int rendererScale;
+	static const std::string title;
+	static const int subChunkSizeX;
+	static const int subChunkSizeY;
+
 	static inline double getDeltaTime() {
 		return deltaTime;
 	}
@@ -19,11 +20,8 @@ public:
 	static inline void setDeltaTime(double time) {
 		deltaTime = time;
 	}
-
-
 private:
-	static inline double deltaTime{ 0 };
-
+	static inline double deltaTime = 0.0;
 };
 
 #endif /* */

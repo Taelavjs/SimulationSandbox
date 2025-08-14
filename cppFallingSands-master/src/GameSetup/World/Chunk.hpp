@@ -5,20 +5,21 @@
 #include "../../Utility/Velocity.hpp"
 #include <vector>
 #include "../../../../SubChunkBoundingBox.hpp"
+#include "../../../../cppFallingSands-master/src/Utility/GlobalVariables.hpp"
 #include <SDL.h>
 class Pixel;
 class WorldGeneration;
 class Chunk {
 public:
 	Chunk();
-	Chunk(Vector2D<int> chunkGlobalCoords, std::vector<std::vector<Pixel*>> chunkVec);
+	Chunk(Vector2D<int> chunkGlobalCoords);
 
 	~Chunk();
-	Chunk& operator=(Chunk&& other) noexcept;
+	Chunk& operator=(Chunk&& other) = delete;
 
 	void render(SDL_Renderer* renderer, const SDL_Rect& playerRect);
 	const Vector2D<int>& getGlobalCoords();
-	std::vector<Pixel*>& operator[](int x);
+	Pixel** operator[](int x);
 	void CreateBaseTexture(SDL_Renderer* renderer);
 
 	int size();
@@ -29,7 +30,7 @@ public:
 
 	void resetPixels(const uint32_t& blackColor);
 private:
-	std::vector<std::vector<Pixel*>> vec;
+	Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize];
 	Vector2D<int> globalCoords;
 	chunkBoundingBox dirtyRec;
 	SDL_Texture* texture;

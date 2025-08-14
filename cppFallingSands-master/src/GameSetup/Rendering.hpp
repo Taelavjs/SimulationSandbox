@@ -17,8 +17,8 @@ public:
 
 
 private:
-	static void castRay(uint32_t* pixels, SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int startX, int startY, int endX, int endY);
-	static void castRays(uint32_t* pixels, SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int row, int col);
+	static void castRay(uint32_t* pixels, SDL_Renderer* renderer, const Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize], int startX, int startY, int endX, int endY);
+	static void castRays(uint32_t* pixels, SDL_Renderer* renderer, const Pixel*& vec, int row, int col);
 	static void ShowSubchunks(uint32_t* pixels, const int& row, const int& col);
 
 private:

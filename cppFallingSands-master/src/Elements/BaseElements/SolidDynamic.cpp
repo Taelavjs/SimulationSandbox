@@ -15,7 +15,7 @@ void SolidDynamic::xDisperse(Chunk& vec, int row, int col, int xDispersion, int 
 	for (int i = 1; i <= xDispersion; i++)
 	{
 		int newCol = col + (xDirection * i);
-		if (newCol < 0 || newCol >= vec[0].size())
+		if (newCol < 0 || newCol >= GlobalVariables::chunkSize)
 		{
 			break; // Out of bounds
 		}
@@ -44,7 +44,7 @@ void SolidDynamic::update(int row, int col, const int& vecWidth, const int& vecH
 	while (moved && blocksFallen <= 4) {
 		moved = false; // Assume no movement; change if a swap is made
 
-		Pixel* pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
+		Pixel*& pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
 		if (row + 1 < vecHeight * 2 && pixBelow == nullptr) {
 			// Move down if the space below is empty
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
@@ -80,10 +80,10 @@ void SolidDynamic::update(int row, int col, const int& vecWidth, const int& vecH
 	while (moved && blocksFallen <= xVelocity) {
 		moved = false; // Assume no movement; change if a swap is made
 
-		Pixel* leftDownPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row + 1));
-		Pixel* rightDownPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row + 1));
-		Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
-		Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+		Pixel*& leftDownPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row + 1));
+		Pixel*& rightDownPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row + 1));
+		Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+		Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 		if (row + 1 >= vecHeight * 2) break;
 		bool isLeftValid = col - 1 >= 0 && (leftDownPix == nullptr || (!leftDownPix->getIsSolid())) && (leftPix == nullptr || (!leftPix->getIsSolid()));
 		bool isRightValid = col + 1 < vecHeight * 2 && (rightDownPix == nullptr || (!rightDownPix->getIsSolid())) && (rightPix == nullptr || (!rightPix->getIsSolid()));

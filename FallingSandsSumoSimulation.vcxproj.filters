@@ -226,5 +226,8 @@
     <ClCompile Include="SubChunkBoundingBox.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="cppFallingSands-master\src\Utility\GlobalVariables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

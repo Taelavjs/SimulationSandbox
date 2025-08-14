@@ -42,44 +42,44 @@ Rendering::~Rendering()
 	SDL_Quit();
 }
 
-void Rendering::castRay(uint32_t* pixels, SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int startX, int startY, int endX, int endY) {
-	int dx = abs(endX - startX);
-	int dy = abs(endY - startY);
-	int sx = startX < endX ? 1 : -1;
-	int sy = startY < endY ? 1 : -1;
-	int err = dx - dy;
-	int e2;
-	int count{ 0 };
-	int limit{ 3 };
-	while (true) {
+void Rendering::castRay(uint32_t* pixels, SDL_Renderer* renderer, const Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize], int startX, int startY, int endX, int endY) {
+	//int dx = abs(endX - startX);
+	//int dy = abs(endY - startY);
+	//int sx = startX < endX ? 1 : -1;
+	//int sy = startY < endY ? 1 : -1;
+	//int err = dx - dy;
+	//int e2;
+	//int count{ 0 };
+	//int limit{ 3 };
+	//while (true) {
 
-		if (startX >= 0 && startX < GlobalVariables::chunkSize && startY >= 0 && startY < GlobalVariables::chunkSize) {
-			if ((vec[startX][startY] == nullptr || vec[startX][startY]->getIsMoveable()) && limit > 0) {
-				limit--;
-				pixels[startX * GlobalVariables::chunkSize + startY] = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 182, 130, 124, 90);
-			}
-			else if (vec[startX][startY] != nullptr || limit <= 0) {
-				count++;
-				if (count == 2) break;
-			};
-		}
+	//	if (startX >= 0 && startX < GlobalVariables::chunkSize && startY >= 0 && startY < GlobalVariables::chunkSize) {
+	//		if ((vec[startX][startY] == nullptr || vec[startX][startY]->getIsMoveable()) && limit > 0) {
+	//			limit--;
+	//			pixels[startX * GlobalVariables::chunkSize + startY] = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 182, 130, 124, 90);
+	//		}
+	//		else if (vec[startX][startY] != nullptr || limit <= 0) {
+	//			count++;
+	//			if (count == 2) break;
+	//		};
+	//	}
 
-		if (startX == endX && startY == endY) break;
-		e2 = 2 * err;
-		if (e2 > -dy) { err -= dy; startX += sx; }
-		if (e2 < dx) { err += dx; startY += sy; }
-	}
+	//	if (startX == endX && startY == endY) break;
+	//	e2 = 2 * err;
+	//	if (e2 > -dy) { err -= dy; startX += sx; }
+	//	if (e2 < dx) { err += dx; startY += sy; }
+	//}
 }
 
 
-void Rendering::castRays(uint32_t* pixels, SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int row, int col) {
-	int rays = 360; // Number of rays to cast
-	for (int i = 0; i < rays; ++i) {
-		float angle = i * (2 * M_PI / rays);
-		int endX = row + GlobalVariables::chunkSize * cos(angle);
-		int endY = col + GlobalVariables::chunkSize * sin(angle);
-		castRay(pixels, renderer, vec, row, col, endX, endY);
-	}
+void Rendering::castRays(uint32_t* pixels, SDL_Renderer* renderer, const Pixel*& vec, int row, int col) {
+	//int rays = 360; // Number of rays to cast
+	//for (int i = 0; i < rays; ++i) {
+	//	float angle = i * (2 * M_PI / rays);
+	//	int endX = row + GlobalVariables::chunkSize * cos(angle);
+	//	int endY = col + GlobalVariables::chunkSize * sin(angle);
+	//	castRay(pixels, renderer, vec, row, col, endX, endY);
+	//}
 }
 
 void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoords) {

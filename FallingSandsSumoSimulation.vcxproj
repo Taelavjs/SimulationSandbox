@@ -201,6 +201,7 @@
     <ClCompile Include="cppFallingSands-master\src\Textures\Sprite.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Textures\SpriteAnimation.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Textures\SpriteSheet.cpp" />
+    <ClCompile Include="cppFallingSands-master\src\Utility\GlobalVariables.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Utility\ProceduralTerrainGen.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Utility\Velocity.cpp" />
     <ClCompile Include="SubChunkBoundingBox.cpp" />

@@ -25,7 +25,7 @@ void Liquid::update(int row, int col, const int& vecWidth, const int& vecHeight,
 	while (moved && blocksFallen <= yVelocity) {
 		moved = false; // Assume no movement; change if a swap is made
 
-		Pixel* pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
+		Pixel*& pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
 		if (row + 1 < vecHeight * 2 && pixBelow == nullptr) {
 			// Move down if the space below is empty
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
@@ -61,8 +61,8 @@ void Liquid::update(int row, int col, const int& vecWidth, const int& vecHeight,
 	while (moved && blocksFallen <= xVelocity) {
 		moved = false; // Assume no movement; change if a swap is made
 
-		Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
-		Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+		Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+		Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
 		bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()));
 		bool isRightValid = col + 1 < vecHeight * 2 && (rightPix == nullptr || (rightPix->getIsLiquid() && rightPix->getDensity() < getDensity()));

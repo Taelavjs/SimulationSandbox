@@ -59,14 +59,12 @@ int main(int argc, char* argv[])
 
 		if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
 			GlobalVariables::setDeltaTime(accumulated_seconds);
+			std::cout << accumulated_seconds << '\n';
 			accumulated_seconds = -timeBetweenFrames;
 
 			i++;
-			// Events
 			game.handleEvents();
-			// frame runing
 			game.update();
-			// Render
 			game.render();
 		}
 	}

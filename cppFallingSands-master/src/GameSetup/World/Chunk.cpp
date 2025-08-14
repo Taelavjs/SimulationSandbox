@@ -2,71 +2,44 @@
 #include "WorldGeneration.hpp"
 #include "../../Elements/BaseElements/Pixel.hpp"
 #include "../../Utility/GlobalVariables.hpp"
-Chunk::Chunk(Vector2D<int> chunkGlobalCoords, std::vector<std::vector<Pixel*>> chunkVec)
-	:globalCoords(chunkGlobalCoords), vec(chunkVec), texture(nullptr)
+Chunk::Chunk(Vector2D<int> chunkGlobalCoords)
+	:globalCoords(chunkGlobalCoords), texture(nullptr)
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
+	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
+		for (int j = 0; j < GlobalVariables::chunkSize; j++) {
+			vec[i][j] = nullptr;
+		}
+	}
 }
 
 Chunk::Chunk()
-	:globalCoords(Vector2D(999, 999)), vec()
+	:globalCoords(Vector2D(999, 999))
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
-	texture = nullptr;;
+	texture = nullptr;
+	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
+		for (int j = 0; j < GlobalVariables::chunkSize; j++) {
+			vec[i][j] = nullptr;
+		}
+	}
 }
 void Chunk::CreateBaseTexture(SDL_Renderer* renderer) {
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
 }
 
-Chunk& Chunk::operator=(Chunk&& other) noexcept {
-	// Check for self-assignment to ensure we're not moving to ourselves
-	if (this != &other) {
-		// Step 1: Clean up our current resources to prevent memory leaks
-		// This is necessary to avoid memory leaks if our object already
-		// had resources allocated.
-		if (texture) {
-			SDL_DestroyTexture(texture);
-		}
-		delete[] pixels;
-		// NOTE: Your destructor should also handle deleting the Pixel* objects in vec.
-
-		// Step 2: "Steal" the resources from the other object
-		vec = std::move(other.vec);
-		globalCoords = other.globalCoords;
-		dirtyRec = other.dirtyRec;
-		texture = other.texture;
-		pixels = other.pixels;
-
-		// Step 3: Nullify the other object's pointers
-		// This is crucial. It ensures the other object's destructor
-		// doesn't try to free the memory we just stole.
-		other.texture = nullptr;
-		other.pixels = nullptr;
-	}
-	return *this;
-}
-
 Chunk::~Chunk() {
 	for (auto& row : vec) {
 		for (Pixel* pix : row) {
-			if (pix != nullptr) {
-				delete pix; // THIS LINE MUST BE UNCOMMENTED
-			}
+			delete pix;
 		}
 	}
-	// Then free the vectors
-	vec.clear();
 
-	// The rest of your destructor is correct
 	if (texture) {
 		SDL_DestroyTexture(texture);
-		texture = nullptr;
 	}
 	delete[] pixels;
-	pixels = nullptr;
-
 }
-
 const Vector2D<int>& Chunk::getGlobalCoords() {
 	return globalCoords;
 }
@@ -129,7 +102,6 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 		}
 	}
 
-	dirtyRect.reset();
 
 	SDL_Rect dstRect = {
 		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,
@@ -154,15 +126,15 @@ SDL_Texture* Chunk::getTexture() { return texture; };
 uint32_t* Chunk::getPixels() { return pixels; };
 
 int Chunk::size() {
-	if (vec.empty() || vec[0].empty()) {
-		return 0;
-	}
-	return (int)vec[0].size();
+	//if (vec.empty() || vec[0].empty()) {
+	//	return 0;
+	//}
+	return GlobalVariables::chunkSize;
 }
 void Chunk::resetPixels(const uint32_t& blackColor) {
 	//std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
 
 }
-std::vector<Pixel*>& Chunk::operator[](int x) {
+Pixel** Chunk::operator[](int x) {
 	return vec[x];
 }
