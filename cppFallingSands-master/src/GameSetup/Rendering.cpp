@@ -1,5 +1,9 @@
 #include "Rendering.hpp"
 #include "../Utility/GlobalVariables.hpp"
+#include <stack>
+#include <iostream>
+#include <vector>
+
 SDL_Window* Rendering::window = nullptr;
 SDL_Renderer* Rendering::renderer = nullptr;
 int Rendering::offsetX = 0;
@@ -83,7 +87,9 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	vec.render(renderer, playerPos);
 
 }
-
+SDL_Renderer* Rendering::getRenderer() {
+	return renderer;
+};
 // 1. Creating texture of chunk
 
 // 2. Displaying it opposite of players position

@@ -1,24 +1,15 @@
 #include "Pixel.hpp"
 #include <algorithm>
-#include <iostream>
 #include "../../Utility/GlobalVariables.hpp"
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <random>
+#include <vector>
 Pixel::Pixel() {}
 Pixel::~Pixel() {}
 
-void Pixel::swapElements(Pixel* pix1, Pixel* pix2)
-{
-	*pix1 = *pix2;
-	pix2 = nullptr;
-}
-
 // FIRE SECTIONß
-
-bool Pixel::getOnFire() { return onFire; };
-void Pixel::setOnFire() {
-	onFire = true;
-};
-
-
 void Pixel::ignite() {
 	if (getOnFire()) return; // already ignited
 	std::random_device rd;
@@ -68,3 +59,40 @@ bool Pixel::fireTick(WorldGeneration& worldGeneration, const int& row, const int
 	}
 	return false;
 }
+
+
+// Group 1
+bool Pixel::getIsMoveable() { return isMoveable; }
+bool Pixel::getIsLiquid() { return isLiquid; }
+bool Pixel::getIsSolid() { return isSolid; }
+bool Pixel::getIsGas() { return isGas; }
+bool Pixel::getIsFlammable() { return isFlammable; }
+//
+
+	// SETTERS ELEMENTAL FEATURES
+void Pixel::setIsMoveable(bool val) { isMoveable = val; }
+void Pixel::setIsLiquid(bool val) { isLiquid = val; }
+void Pixel::setIsSolid(bool val) { isSolid = val; }
+void Pixel::setIsGas(bool val) { isGas = val; }
+void Pixel::setIsFlammable(bool val) { isFlammable = val; }
+
+// GETTERS FUNCTIONS
+bool Pixel::getProcessed() { return isProcessed; }
+int Pixel::getMass() { return mass; }
+uint32_t Pixel::getColour() { return color; }
+double Pixel::getChanceToIgnite() { return chanceToIgnite; }
+int Pixel::getHp() { return hp; }
+int Pixel::getDensity() { return density; }
+int Pixel::getTerminalX() { return terminalX; }
+int Pixel::getTerminalY() { return terminalY; }
+bool Pixel::getOnFire() { return onFire; };
+
+// SETTERS FUNCTIONS
+void Pixel::setProcessed(bool val) { isProcessed = val; }
+void Pixel::setFlammable(bool val) { isFlammable = val; }
+void Pixel::setHp(int health) { hp = health; }
+void Pixel::setMass(int val) { mass = val; }
+void Pixel::setChanceToIgnite(double val) { chanceToIgnite = val; }
+void Pixel::setOnFire() { onFire = true; };
+void Pixel::setDensity(int val) { density = val; }
+void Pixel::setColor(uint32_t val) { color = val; }

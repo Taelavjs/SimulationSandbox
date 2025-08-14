@@ -1,4 +1,11 @@
 #include "Game.hpp"
+#include <string>
+#include <future>
+#include <iostream>
+#include "../Playables/Player.hpp"
+#include "../Textures/Sprite.hpp"
+#include "Rendering.hpp"
+#include "../Utility/GlobalVariables.hpp"
 Game::Game()
 	: isRunning(true), worldGeneration()
 {

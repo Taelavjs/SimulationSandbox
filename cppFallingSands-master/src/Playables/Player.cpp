@@ -1,5 +1,15 @@
 #include "Player.hpp"
 #include "../Utility/GlobalVariables.hpp"
+#include "../Textures/SpriteAnimation.hpp"
+#include <iostream>
+#include <map>
+#include <string>
+#include <tuple>
+
+
+
+
+
 Player::Player(Sprite* sprite) :playerSprite(sprite), velocity(), stateManager(), position(0, 0), validPosition(0, 0), playerScale(16, 16), playerCenterPosition(0, 0)
 {
 	SDL_Texture* texture = playerSprite->getTexture();
@@ -15,6 +25,17 @@ Player::~Player() {
 	delete playerSprite;
 }
 
+Sprite* Player::getSprite() {
+	return playerSprite;
+}
+const Vector2D<float>& Player::getCoordinates() {
+	return position;
+}
+const Vector2D<float>& Player::getDimensions() {
+	return playerScale;
+}
+const SDL_Rect& Player::getPlayerRect() { return playerAABB; }
+std::stack<SDL_Rect> Player::getStackRender() { return stckToRender; };
 void Player::playerReleaseHandler(SDL_Scancode e) {
 	if (e == SDL_SCANCODE_RIGHT) {
 		dRight = false;

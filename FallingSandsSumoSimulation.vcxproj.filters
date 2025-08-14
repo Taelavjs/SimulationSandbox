@@ -28,7 +28,7 @@
     <Filter Include="Source Files\GameSetup">
       <UniqueIdentifier>{61663a94-8c8c-4525-9d5c-a877da7faa1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Elements">
+    <Filter Include="Source Files\Elements">
       <UniqueIdentifier>{6a598ae3-50e1-40ca-85bb-9478b1118483}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -149,40 +149,40 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Gas.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Liquid.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Moveable.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Pixel.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\SolidDynamic.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\SolidImmoveable.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Napalm.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Oil.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Rock.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Sand.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Smoke.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\Elements\Water.cpp">
-      <Filter>Header Files\Elements</Filter>
+      <Filter>Source Files\Elements</Filter>
     </ClCompile>
     <ClCompile Include="cppFallingSands-master\src\GameSetup\Game.cpp">
       <Filter>Source Files\GameSetup</Filter>

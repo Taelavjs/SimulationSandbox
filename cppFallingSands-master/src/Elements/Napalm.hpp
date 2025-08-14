@@ -5,13 +5,13 @@
 
 class Napalm : public Liquid {
 public:
-    Napalm();
-    virtual ~Napalm();
-    virtual Pixel *clone() const { return new Napalm(); }
+	Napalm();
+	virtual ~Napalm();
+	virtual Pixel* clone() const;
 
 
 private:
-    bool movingRight{false};
+	bool movingRight{ false };
 };
 
 #endif /* NAPALM_HPP */

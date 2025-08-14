@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef PROCEDURALTERRAINGEN
+#define PROCEDURALTERRAINGEN
 #include "FastNoiseLite.h"
 #include <vector>
 
@@ -12,3 +12,4 @@ private:
 	static std::vector<float> gatherNoiseData(FastNoiseLite& noise, int w, int h);
 };
 
+#endif

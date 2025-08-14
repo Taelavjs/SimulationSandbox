@@ -2,13 +2,8 @@
 #define GAME_HPP
 
 #include <vector>
-#include <thread>
-#include <random>
-#include <string>
-#include <iostream>
+
 #include <SDL.h>
-#include <future>
-#include "Game.hpp"
 #include "../Elements/BaseElements/Pixel.hpp"
 #include "../Elements/Sand.hpp"
 #include "../Elements/Water.hpp"
@@ -16,22 +11,12 @@
 #include "../Elements/Smoke.hpp"
 #include "../Elements/Oil.hpp"
 #include "../Elements/Napalm.hpp"
-#include "Rendering.hpp"
-#include "../Playables/Player.hpp"
-#include "../Textures/Sprite.hpp"
-#include "../Utility/GlobalVariables.hpp"
 #include "../../../SubChunkBoundingBox.hpp"
-class Pixel;
-class Sand;
-class Water;
-class Rock;
-class Smoke;
-class Oil;
-class Napalm;
+#include "World/WorldGeneration.hpp"
+
 class Rendering;
 class Player;
 class Sprite;
-#include "World/WorldGeneration.hpp"
 class Chunk;
 
 class Game {

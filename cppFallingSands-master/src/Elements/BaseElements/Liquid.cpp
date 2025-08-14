@@ -1,6 +1,6 @@
 #include "Liquid.hpp"
+#include <algorithm>
 
-#include "SolidDynamic.hpp"
 
 Liquid::Liquid() {
 	setIsMoveable(true);

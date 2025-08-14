@@ -1,6 +1,5 @@
 #include "Gas.hpp"
-
-#include "Gas.hpp"
+#include <cmath>
 
 Gas::Gas()
 {

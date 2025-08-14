@@ -1,9 +1,7 @@
 #ifndef GAS_HPP
 #define GAS_HPP
-#include "SolidDynamic.hpp"
 #include "Pixel.hpp"
 #include "Moveable.hpp"
-#include <cmath>
 
 class Gas : public Moveable {
 public:

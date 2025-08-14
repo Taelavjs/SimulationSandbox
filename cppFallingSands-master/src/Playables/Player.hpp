@@ -4,47 +4,38 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include <vector>
-#include <iostream>
-#include <map>
-#include <string>
-#include <tuple>
 #include "../Elements/BaseElements/Pixel.hpp"
-#include <stack>
 #include "../Utility/Velocity.hpp"
 #include "PlayerHandlers/PlayerStateManager.hpp"
-#include "../Textures/SpriteAnimation.hpp"
 #include "../Textures/Animation.hpp"
+#include <stack>
+
 class Sprite;
 class Player {
 public:
 	Player(Sprite* sprite);
 	~Player();
 
-	Sprite* getSprite() {
-		return playerSprite;
-	}
+	Sprite* getSprite();
+	const Vector2D<float>& getCoordinates();
+	const Vector2D<float>& getDimensions();
+	const SDL_Rect& getPlayerRect();
+	void renderPlayer(SDL_Renderer* renderer, int screenWidth);
+	void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
+	std::stack<SDL_Rect> getStackRender();
 
 	void playerInputHandler(SDL_Scancode e);
 	void playerReleaseHandler(SDL_Scancode e);
-	void renderPlayer(SDL_Renderer* renderer, int screenWidth);
-	void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
-	const Vector2D<float>& getCoordinates() {
-		return position;
-	}
 
-	const Vector2D<float>& getDimensions() {
-		return playerScale;
-	}
+	Velocity velocity;
 
+private:
+	void checkAreaCollision(bool& isBlockInPlayer, std::vector<SDL_Rect>& collisions, WorldGeneration& worldGeneration);
+	bool isFlipTexture();
 	void handleCollision(SDL_Rect* colliderRect);
-	const SDL_Rect& getPlayerRect() { return playerAABB; }
-	std::stack<SDL_Rect> getStackRender() { return stckToRender; };
 	void playerForcesInputs();
 	void collisionHandler(WorldGeneration& worldGeneration);
-	bool isFlipTexture();
-	Velocity velocity;
 	void resetPlayerColliders();
-	void checkAreaCollision(bool& isBlockInPlayer, std::vector<SDL_Rect>& collisions, WorldGeneration& worldGeneration);
 
 private:
 	SDL_Rect playerAABB;

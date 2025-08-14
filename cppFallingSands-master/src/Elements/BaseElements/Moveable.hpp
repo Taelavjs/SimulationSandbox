@@ -1,9 +1,6 @@
 #ifndef MOVEABLE_HPP
 #define MOVEABLE_HPP
 #include "Pixel.hpp"
-#include <math.h>
-#include <random>
-
 
 class Moveable : public Pixel {
 public:
@@ -11,9 +8,7 @@ public:
 	~Moveable();
 	float randomNumber();
 	void updateVelocity(int& newCol, int upDown);
-	void resetVelocity() {
-		yVelocity = 0;
-	}
+	void resetVelocity();
 	bool isSpaceFree(Chunk& vec, int row, int col);
 private:
 	int yVelocity{ 0 };

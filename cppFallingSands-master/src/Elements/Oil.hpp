@@ -4,13 +4,13 @@
 
 class Oil : public Liquid {
 public:
-    Oil();
-    virtual ~Oil();
-    virtual Pixel *clone() const { return new Oil(); }
+	Oil();
+	virtual ~Oil();
+	virtual Pixel* clone() const;
 
 public:
-    virtual uint32_t getColour();
-    
-};  
+	virtual uint32_t getColour();
+
+};
 
 #endif /* Oil_HPP */

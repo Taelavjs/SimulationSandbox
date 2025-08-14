@@ -1,6 +1,7 @@
 #include "Moveable.hpp"
 #include <chrono>
-
+#include <math.h>
+#include <random>
 Moveable::Moveable() {
 	setIsMoveable(true);
 }
@@ -9,8 +10,13 @@ Moveable::~Moveable() {
 
 }
 
+void Moveable::resetVelocity() {
+	yVelocity = 0;
+}
+
 void Moveable::updateVelocity(int& newCol, int upDown)
 {
+
 	newCol += ((int)2.0f / getMass() + yVelocity) * upDown;
 	yVelocity += (int)2.0f * upDown;
 	if (yVelocity > getTerminalY() * upDown) yVelocity = getTerminalY();
