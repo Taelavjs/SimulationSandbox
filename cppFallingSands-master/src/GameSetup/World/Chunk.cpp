@@ -1,6 +1,7 @@
 #include "Chunk.hpp"
 #include "WorldGeneration.hpp"
 #include "../../Elements/BaseElements/Pixel.hpp"
+#include "../../Utility/GlobalVariables.hpp"
 Chunk::Chunk(Vector2D<int> chunkGlobalCoords, std::vector<std::vector<Pixel*>> chunkVec)
 	:globalCoords(chunkGlobalCoords), vec(chunkVec), texture(nullptr)
 {

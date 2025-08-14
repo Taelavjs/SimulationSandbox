@@ -2,12 +2,8 @@
 #define WORLDGENERATION
 #include "../../Utility/ProceduralTerrainGen.hpp"
 #include "../../Utility/Velocity.hpp"
-#include <iostream>
-#include <iomanip> // Required for std::setprecision
 #include <vector>
-#include <map>
 #include "Chunk.hpp"
-#include <math.h>       /* fmod */
 #include <unordered_map>
 class Chunk;
 class Napalm;

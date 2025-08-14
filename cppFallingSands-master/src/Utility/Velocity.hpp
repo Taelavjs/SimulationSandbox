@@ -1,5 +1,5 @@
-#ifndef VELOCITY
-#define VELOCITY
+#ifndef VECTOR2D
+#define VECTOR2D
 #include <iostream>
 #include <tuple>
 #include <cmath>
@@ -35,29 +35,23 @@ namespace std {
 		}
 	};
 }
+#endif
+
+#ifndef VELOCITY
+#define VELOCITY
 class Velocity {
 public:
 	Velocity();
 	~Velocity();
 
-	Vector2D<float> getVelocity() {
-		return velocity;
-	};
+	Vector2D<float> getVelocity();
 	void velocityTick();
-	void resetVelocity() {
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-	}
+	void resetVelocity();
 
-	void setVelocity(int pX, int pY) {
-		velocity.x = (float)pX;
-		velocity.y = (float)pY;
-	}
+	void setVelocity(int pX, int pY);
 
 	void addForce(float vectorLength, float angle);
-	void setIsGrounded(bool value) {
-		isGrounded = value;
-	}
+	void setIsGrounded(bool value);
 
 private:
 	Vector2D<float> velocity;

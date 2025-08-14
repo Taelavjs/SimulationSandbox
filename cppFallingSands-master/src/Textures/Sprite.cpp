@@ -1,5 +1,6 @@
 #include "Sprite.hpp" // Test Commit
-
+#include "../GameSetup/Rendering.hpp"
+#include <iostream>
 Sprite::Sprite(const char* srcPath) {
 	SDL_Renderer* renderer = Rendering::getRenderer();
 	surface = IMG_Load(srcPath);

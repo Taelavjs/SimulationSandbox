@@ -9,6 +9,7 @@
 #include "PlayerHandlers/PlayerStateManager.hpp"
 #include "../Textures/Animation.hpp"
 #include <stack>
+#include <map>
 
 class Sprite;
 class Player {

@@ -2,7 +2,6 @@
 #include "../Utility/GlobalVariables.hpp"
 #include "../Textures/SpriteAnimation.hpp"
 #include <iostream>
-#include <map>
 #include <string>
 #include <tuple>
 

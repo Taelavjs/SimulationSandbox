@@ -7,6 +7,10 @@
 #include "../../Elements/Smoke.hpp"
 #include "../../Elements/Water.hpp"
 #include "../../Utility/GlobalVariables.hpp"
+#include <map>
+#include <iomanip> 
+#include <iostream>
+#include <math.h>   
 
 WorldGeneration::WorldGeneration()
 	: emptyChunk()

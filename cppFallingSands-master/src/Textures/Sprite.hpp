@@ -3,8 +3,6 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include <vector>
-#include <iostream>
-#include "../GameSetup/Rendering.hpp"
 
 
 class Sprite {

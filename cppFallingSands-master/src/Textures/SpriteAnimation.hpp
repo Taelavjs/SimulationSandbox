@@ -3,7 +3,6 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "Animation.hpp"
-#include "Sprite.hpp"
 #include <string>
 class SpriteAnimation {
 public:

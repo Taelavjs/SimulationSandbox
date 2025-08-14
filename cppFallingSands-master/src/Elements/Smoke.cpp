@@ -1,6 +1,6 @@
 #include "Smoke.hpp"
-
-#include "Water.hpp"
+#include "BaseElements/Pixel.hpp"
+#include "BaseElements/Gas.hpp"
 
 Smoke::Smoke()
 {

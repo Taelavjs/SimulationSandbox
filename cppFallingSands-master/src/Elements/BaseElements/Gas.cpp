@@ -51,15 +51,15 @@ void Gas::update(int row, int col, const int& vecWidth, const int& vecHeight, Wo
 	}
 
 	if (blocksFallen > 0) {
-		yVelocity += 2;
-		yVelocity = std::min(yVelocity, 4);
+		yVelocity += 1;
+		yVelocity = std::min(yVelocity, 2);
 		return;
 	};
 	yVelocity = 1;
 
 	blocksFallen = 0;
 	moved = true;
-	while (moved && blocksFallen <= 4) {
+	while (moved && blocksFallen <= 2) {
 		moved = false;
 
 		Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));

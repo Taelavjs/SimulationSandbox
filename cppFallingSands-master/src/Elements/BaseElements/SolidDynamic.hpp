@@ -1,11 +1,6 @@
 #ifndef SOLIDDYNAMIC_HPP
 #define SOLIDDYNAMIC_HPP
-#include "Pixel.hpp"
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <vector>
-#include <random>
+
 #include "Moveable.hpp"
 class WorldGeneration;
 

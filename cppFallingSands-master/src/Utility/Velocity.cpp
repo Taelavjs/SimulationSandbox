@@ -8,7 +8,22 @@ Velocity::Velocity() :
 Velocity::~Velocity() {
 
 }
+Vector2D<float> Velocity::getVelocity() {
+	return velocity;
+};
+void Velocity::resetVelocity() {
+	velocity.x = 0.0f;
+	velocity.y = 0.0f;
+}
 
+void Velocity::setVelocity(int pX, int pY) {
+	velocity.x = (float)pX;
+	velocity.y = (float)pY;
+}
+
+void Velocity::setIsGrounded(bool value) {
+	isGrounded = value;
+}
 
 void Velocity::velocityTick() {
 	if (!isGrounded) {
@@ -52,3 +67,5 @@ void Velocity::addForce(float vectorLength, float angle) {
 	velocity.y += std::sin(radianAngle) * vectorLength * GlobalVariables::getDeltaTime();
 
 }
+
+

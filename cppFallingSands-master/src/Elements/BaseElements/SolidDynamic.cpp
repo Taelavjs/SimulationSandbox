@@ -1,5 +1,5 @@
 #include "SolidDynamic.hpp"
-
+#include <random>
 SolidDynamic::SolidDynamic() {
 	setIsMoveable(true);
 	setIsSolid(true);
