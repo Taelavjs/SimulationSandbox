@@ -18,18 +18,13 @@ std::vector<float> ProceduralTerrainGen::gatherNoiseData(FastNoiseLite& noise, i
 std::vector<float> ProceduralTerrainGen::createNoise(int w, int h) {
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	noise.SetFrequency(0.05f); // Reduced frequency for more organic shapes
+	noise.SetFrequency(0.009f); // Reduced frequency for more organic shapes
 
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> uni(0, 99999);
 	auto random_integer = uni(rng);
 	noise.SetSeed(random_integer);
-
-	noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-	noise.SetFractalOctaves(5); // Increased octaves for more detail
-	noise.SetFractalLacunarity(2.0f); // More standard value
-	noise.SetFractalGain(0.5f); // More standard value
 
 	return gatherNoiseData(noise, w, h);
 }

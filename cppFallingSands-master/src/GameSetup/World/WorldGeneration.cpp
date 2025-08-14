@@ -38,10 +38,11 @@ void WorldGeneration::generateBlock() {
 	}
 
 	std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
+	std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
 		Chunk& chunk = mapEntry.second;
-		//pixelsToBlocks(noiseMap, mapEntry.first, chunk);
+		pixelsToBlocks(noiseMap, mapEntry.first, chunk);
 		generateCorridors(terrainMap, mapEntry.first, chunk);
 	}
 }
@@ -108,6 +109,11 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D<int> 
 	{
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
 		{
+			if (chunkStartY < 15) {
+				vec[row][col] = nullptr;
+				continue;
+			}
+
 			if (vec[row][col] != nullptr) {
 				continue;
 			}

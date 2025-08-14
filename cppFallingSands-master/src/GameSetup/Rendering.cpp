@@ -6,19 +6,27 @@ int Rendering::offsetX = 0;
 int Rendering::offsetY = 0;
 uint32_t Rendering::blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
 uint32_t Rendering::redColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 0, 0, 255);
+SDL_Rect Rendering::camera = { 0,0, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth * GlobalVariables::rendererScale, GlobalVariables::rendererScale * GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth };
+// Revised Rendering.cpp
 
 void Rendering::setValues() {
-
 	SDL_Init(SDL_INIT_VIDEO);
 	std::cout << "Everything SDL Initialized Correctly" << '\n';
 
-	Rendering::window = SDL_CreateWindow(GlobalVariables::title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 800, SDL_WINDOW_SHOWN);
+	int windowWidth = GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth;
+	int windowHeight = GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth;
+
+	camera.w = windowWidth * GlobalVariables::rendererScale;
+	camera.h = windowHeight * GlobalVariables::rendererScale;
+
+	Rendering::window = SDL_CreateWindow(GlobalVariables::title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, camera.w, camera.h, SDL_WINDOW_SHOWN);
 	Rendering::renderer = SDL_CreateRenderer(Rendering::window, -1, 0);
+
+	SDL_RenderSetScale(Rendering::renderer, GlobalVariables::rendererScale, GlobalVariables::rendererScale);
+
 	SDL_SetRenderTarget(renderer, nullptr);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
-	SDL_RenderSetScale(Rendering::renderer, GlobalVariables::rendererScale, GlobalVariables::rendererScale);
-	SDL_RenderDrawPoint(Rendering::renderer, 5, 5);
 	SDL_RenderPresent(Rendering::renderer);
 	SDL_PumpEvents();
 }
@@ -74,6 +82,7 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
 	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
 
+
 	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
 	if (texture == nullptr)
 	{
@@ -82,32 +91,22 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 	}
 	uint32_t* pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
 
-	int z = 0;
 	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
-	const Vector2D<float>& playerCoords = player->getCoordinates();
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 	{
-		if (std::abs(row + globalOffputY - playerCoords.y) > 300) continue;
-
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
 		{
-			if (std::abs(col + globalOffputX - playerCoords.x) > 300) continue;
 			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : blackColor;
-
 			pixels[row * GlobalVariables::chunkSize + col] = color;
 			Rendering::ShowSubchunks(pixels, row, col);
 
 			if (vec[row][col] == nullptr)
 				continue;
 			vec[row][col]->setProcessed(false);
-			z++;
 		}
 
 	}
-	// The green color we will use for the border (Opaque Green).
 	const uint32_t greenColor = 0xFF00FF00;
-
-	// --- Start of new logic to draw the dirty rect border ---
 	chunkBoundingBox& dirtyRect = vec.getDirtyRect();
 	if (dirtyRect.getIsDirty()) {
 		int minX = dirtyRect.getMinX();
@@ -115,36 +114,34 @@ void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoord
 		int maxX = dirtyRect.getMaxX();
 		int maxY = dirtyRect.getMaxY();
 
-		// Loop to draw the top and bottom borders
 		for (int x = minX; x < maxX; ++x) {
-			// Top border
 			if (minY >= 0 && minY < GlobalVariables::chunkSize) {
 				pixels[minY * GlobalVariables::chunkSize + x] = greenColor;
 			}
-			// Bottom border
 			if (maxY >= 0 && maxY < GlobalVariables::chunkSize) {
 				pixels[maxY * GlobalVariables::chunkSize + x] = greenColor;
 			}
 		}
-
-		// Loop to draw the left and right borders
 		for (int y = minY; y < maxY; ++y) {
-			// Left border
 			if (minX >= 0 && minX < GlobalVariables::chunkSize) {
 				pixels[y * GlobalVariables::chunkSize + minX] = greenColor;
 			}
-			// Right border
 			if (maxX >= 0 && maxX < GlobalVariables::chunkSize) {
 				pixels[y * GlobalVariables::chunkSize + maxX] = greenColor;
 			}
 		}
 	}
-
 	dirtyRect.reset();
+
 	//const SDL_Rect& AABB = player->getPlayerRect();
-	//Rendering::offsetX = AABB.x - 5;
-	//Rendering::offsetY = AABB.y - 1;
+	const SDL_Rect& playerPos = player->getPlayerRect();
+
 	SDL_Rect dstRect = { ((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize };
+	dstRect.x -= playerPos.x - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
+	dstRect.y -= playerPos.y - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
+
+
+	// Move opposite to player
 
 	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
@@ -158,13 +155,13 @@ void Rendering::ShowSubchunks(uint32_t* pixels, const int& row, const int& col) 
 
 void Rendering::renderPlayer(Player* player) {
 	SDL_Rect AABB = player->getPlayerRect();
-	player->renderPlayer(renderer, GlobalVariables::chunkSize);
+	player->renderPlayer(renderer, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth);
 	std::stack<SDL_Rect> toRender = player->getStackRender();
-	while (!toRender.empty()) {
-		SDL_Rect cube = toRender.top();
-		SDL_RenderDrawRect(renderer, &cube);
-		toRender.pop();
-	}
+	//while (!toRender.empty()) {
+	//	SDL_Rect cube = toRender.top();
+	//	SDL_RenderDrawRect(renderer, &cube);
+	//	toRender.pop();
+	//}
 }
 
 void Rendering::showRendering() {

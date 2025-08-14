@@ -56,7 +56,6 @@ int main(int argc, char* argv[])
 		system_timer.tick();
 		accumulated_seconds += system_timer.elapsed_seconds;
 		GlobalVariables::setDeltaTime(accumulated_seconds);
-		std::cout << accumulated_seconds << '\n';
 		if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
 			accumulated_seconds = -timeBetweenFrames;
 			i++;

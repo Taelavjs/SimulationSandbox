@@ -34,7 +34,7 @@ private:
 	static int offsetY;
 	static uint32_t blackColor;
 	static uint32_t redColor;
-
+	static SDL_Rect camera;
 };
 
 #endif /* RENDERING_HPP */

@@ -230,9 +230,9 @@ void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth) {
 		prev = stateManager.getCurrentState();
 	}
 	SDL_Texture* texture = playerSprite->getTexture();
-	SDL_Rect* rect = animations[stateManager.getCurrentState()].play();
+	const SDL_Rect* rect = animations[stateManager.getCurrentState()].play();
 
-	SDL_Rect* dst = new SDL_Rect{ 0 + screenWidth / 2, 0 + screenWidth / 2, (int)playerScale.x, (int)playerScale.y };
+	const SDL_Rect* dst = new SDL_Rect{ GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth / 2, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth / 2, (int)playerScale.x, (int)playerScale.y };
 	SDL_RendererFlip flip;
 	if (isFlipTexture()) {
 		flip = SDL_FLIP_HORIZONTAL;
