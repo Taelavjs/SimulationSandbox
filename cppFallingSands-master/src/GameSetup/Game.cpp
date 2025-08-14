@@ -64,7 +64,7 @@ void SquarePlace(Chunk& vec, int x, int y, Pixel* elm)
 void Game::handleEvents()
 {
 	const Uint8* e = SDL_GetKeyboardState(&numKeys);
-	Chunk localChunk = worldGeneration.getLocalVec();
+	Chunk& localChunk = worldGeneration.getLocalVec();
 
 	int x{}, y{};
 	if (e)

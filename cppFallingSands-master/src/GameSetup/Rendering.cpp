@@ -79,75 +79,16 @@ void Rendering::castRays(uint32_t* pixels, SDL_Renderer* renderer, const std::ve
 }
 
 void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoords) {
-	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
-	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
-
-
-	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
-	if (texture == nullptr)
-	{
-		std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-		return;
-	}
-	uint32_t* pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
-
-	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
-	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
-	{
-		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
-		{
-			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : blackColor;
-			pixels[row * GlobalVariables::chunkSize + col] = color;
-			Rendering::ShowSubchunks(pixels, row, col);
-
-			if (vec[row][col] == nullptr)
-				continue;
-			vec[row][col]->setProcessed(false);
-		}
-
-	}
-	const uint32_t greenColor = 0xFF00FF00;
-	chunkBoundingBox& dirtyRect = vec.getDirtyRect();
-	if (dirtyRect.getIsDirty()) {
-		int minX = dirtyRect.getMinX();
-		int minY = dirtyRect.getMinY();
-		int maxX = dirtyRect.getMaxX();
-		int maxY = dirtyRect.getMaxY();
-
-		for (int x = minX; x < maxX; ++x) {
-			if (minY >= 0 && minY < GlobalVariables::chunkSize) {
-				pixels[minY * GlobalVariables::chunkSize + x] = greenColor;
-			}
-			if (maxY >= 0 && maxY < GlobalVariables::chunkSize) {
-				pixels[maxY * GlobalVariables::chunkSize + x] = greenColor;
-			}
-		}
-		for (int y = minY; y < maxY; ++y) {
-			if (minX >= 0 && minX < GlobalVariables::chunkSize) {
-				pixels[y * GlobalVariables::chunkSize + minX] = greenColor;
-			}
-			if (maxX >= 0 && maxX < GlobalVariables::chunkSize) {
-				pixels[y * GlobalVariables::chunkSize + maxX] = greenColor;
-			}
-		}
-	}
-	dirtyRect.reset();
-
-	//const SDL_Rect& AABB = player->getPlayerRect();
 	const SDL_Rect& playerPos = player->getPlayerRect();
+	vec.render(renderer, playerPos);
 
-	SDL_Rect dstRect = { ((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize };
-	dstRect.x -= playerPos.x - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
-	dstRect.y -= playerPos.y - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
-
-
-	// Move opposite to player
-
-	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
-	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
-	delete[] pixels;
-	SDL_DestroyTexture(texture);
 }
+
+// 1. Creating texture of chunk
+
+// 2. Displaying it opposite of players position
+
+// 3. Deleting Texture
 
 void Rendering::ShowSubchunks(uint32_t* pixels, const int& row, const int& col) {
 	if (row % GlobalVariables::subChunkSizeX == 0 || col % GlobalVariables::subChunkSizeX == 0) pixels[row * GlobalVariables::chunkSize + col] = redColor;
