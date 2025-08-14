@@ -139,7 +139,6 @@ void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow,
 	int maxRow = box.getMaxY();
 	int minCol = box.getMinX();
 	int maxCol = box.getMaxX();
-
 	for (int row = globalChunk.y * GlobalVariables::chunkSize + minRow; row <= globalChunk.y * GlobalVariables::chunkSize + maxRow; ++row) {
 		int globalRow = globalChunk.y * GlobalVariables::chunkSize + row;
 
@@ -154,6 +153,7 @@ void Game::worker(const Vector2D<int>& globalChunk, const int& startingChunkRow,
 			updateSequence(row, col);
 		}
 	}
+
 
 }
 void Game::ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords) {

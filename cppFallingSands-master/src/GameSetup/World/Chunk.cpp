@@ -85,44 +85,44 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 	}
 
 	resetPixels(0xFF000000);
-
-	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
-	{
-		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
+	if (dirtyRec.getIsDirty() || firstRender) {
+		firstRender = false;
+		for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 		{
-			uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : 0xFF000000;
-			pixels[row * GlobalVariables::chunkSize + col] = color;
+			for (int col = 0; col < GlobalVariables::chunkSize; ++col)
+			{
+				const uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : 0xFF000000;
+				pixels[row * GlobalVariables::chunkSize + col] = color;
 
-			if (vec[row][col] == nullptr)
-				continue;
-			vec[row][col]->setProcessed(false);
+				if (vec[row][col] == nullptr)
+					continue;
+				vec[row][col]->setProcessed(false);
+			}
 		}
-
 	}
+
 
 	const uint32_t greenColor = 0xFF00FF00;
 	chunkBoundingBox& dirtyRect = getDirtyRect();
-	if (dirtyRect.getIsDirty()) {
-		int minX = dirtyRect.getMinX();
-		int minY = dirtyRect.getMinY();
-		int maxX = dirtyRect.getMaxX();
-		int maxY = dirtyRect.getMaxY();
+	int minX = dirtyRect.getMinX();
+	int minY = dirtyRect.getMinY();
+	int maxX = dirtyRect.getMaxX();
+	int maxY = dirtyRect.getMaxY();
 
-		for (int x = minX; x < maxX; ++x) {
-			if (minY >= 0 && minY < GlobalVariables::chunkSize) {
-				pixels[minY * GlobalVariables::chunkSize + x] = greenColor;
-			}
-			if (maxY >= 0 && maxY < GlobalVariables::chunkSize) {
-				pixels[maxY * GlobalVariables::chunkSize + x] = greenColor;
-			}
+	for (int x = minX; x < maxX; ++x) {
+		if (minY >= 0 && minY < GlobalVariables::chunkSize) {
+			pixels[minY * GlobalVariables::chunkSize + x] = greenColor;
 		}
-		for (int y = minY; y < maxY; ++y) {
-			if (minX >= 0 && minX < GlobalVariables::chunkSize) {
-				pixels[y * GlobalVariables::chunkSize + minX] = greenColor;
-			}
-			if (maxX >= 0 && maxX < GlobalVariables::chunkSize) {
-				pixels[y * GlobalVariables::chunkSize + maxX] = greenColor;
-			}
+		if (maxY >= 0 && maxY < GlobalVariables::chunkSize) {
+			pixels[maxY * GlobalVariables::chunkSize + x] = greenColor;
+		}
+	}
+	for (int y = minY; y < maxY; ++y) {
+		if (minX >= 0 && minX < GlobalVariables::chunkSize) {
+			pixels[y * GlobalVariables::chunkSize + minX] = greenColor;
+		}
+		if (maxX >= 0 && maxX < GlobalVariables::chunkSize) {
+			pixels[y * GlobalVariables::chunkSize + maxX] = greenColor;
 		}
 	}
 	dirtyRect.reset();
@@ -156,7 +156,7 @@ int Chunk::size() {
 	return (int)vec[0].size();
 }
 void Chunk::resetPixels(const uint32_t& blackColor) {
-	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
+	//std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
 
 }
 std::vector<Pixel*>& Chunk::operator[](int x) {

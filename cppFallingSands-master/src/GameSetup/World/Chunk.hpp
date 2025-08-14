@@ -34,7 +34,7 @@ private:
 	chunkBoundingBox dirtyRec;
 	SDL_Texture* texture;
 	uint32_t* pixels;
-
+	bool firstRender{ true };
 };
 
 #endif /* CHUNK */
