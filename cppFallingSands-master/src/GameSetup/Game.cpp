@@ -7,7 +7,7 @@
 #include "Rendering.hpp"
 #include "../Utility/GlobalVariables.hpp"
 Game::Game()
-	: isRunning(true), worldGeneration()
+	: isRunning(true), worldGeneration(), threadPool(4)
 {
 	sand = new Sand();
 	water = new Water();
@@ -163,21 +163,38 @@ void Game::worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playe
 
 
 }
-void Game::ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords) {
 
+void Game::MultiThreadWorker(const int startIndex, const int startYIndex,
+	const Vector2D<float>& playerCoords) {
+	for (int i = startIndex; i < GlobalVariables::worldChunkWidth; i += 2) { // Corrected loop
+		for (int j = startYIndex; j < GlobalVariables::worldChunkWidth; j += 2) { // Corrected loop
+			chunkBoundingBox& box = worldGeneration.getVecStore()[{i, j}].getDirtyRect();
+			if (isFirstRun || box.getIsDirty()) {
+				threadPool.enqueue([this, &box, playerCoords, i, j]() {
+					this->worker({ i, j }, playerCoords, box);
+					});
+			}
+
+		}
+	}
+	threadPool.wait_for_all_tasks();
 }
+
 void Game::update() {
 	Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
 
 	Vector2D dimensions = player->getDimensions();
-	std::unordered_map<Vector2D<int>, Chunk>& chunks = worldGeneration.getVecStore();
 	const Vector2D<float>& playerCoords = player->getCoordinates();
+	MultiThreadWorker(0, 0, playerCoords);
+	MultiThreadWorker(1, 0, playerCoords);
+	MultiThreadWorker(0, 1, playerCoords);
+	MultiThreadWorker(1, 1, playerCoords);
 
-	for (auto& mapEntry : chunks) {
-		auto& rec = mapEntry.second.getDirtyRect();
-		if (!isFirstRun && !rec.getIsDirty()) return;
-		worker(mapEntry.first, playerCoords, rec);
-	}
+	//for (auto& mapEntry : chunks) {
+	//	auto& rec = mapEntry.second.getDirtyRect();
+	//	if (!isFirstRun && !rec.getIsDirty()) return;
+	//	worker(mapEntry.first, playerCoords, rec);
+	//}
 	player->update(Rendering::getRenderer(), worldGeneration);
 	worldGeneration.clearPixelProcessed();
 }

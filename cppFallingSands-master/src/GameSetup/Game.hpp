@@ -13,6 +13,7 @@
 #include "../Elements/Napalm.hpp"
 #include "../../../SubChunkBoundingBox.hpp"
 #include "World/WorldGeneration.hpp"
+#include "../../../ThreadPool.hpp"
 
 class Rendering;
 class Player;
@@ -23,7 +24,7 @@ class Game {
 public:
 	Game();
 	~Game();
-
+	void MultiThreadWorker(const int startIndex, const int startYIndex, const Vector2D<float>& playerCoords);
 	void init();
 	void handleEvents();
 	void update();
@@ -35,7 +36,6 @@ public:
 	double randomnumber();
 	void updateSequence(const int& row, const int& col);
 	void pixelsToBlocks(std::vector<float> pixels);
-	void ChunkUpdateSkipping(Vector2D<int>& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D<float>& playerCoords);
 	void worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
 
 	void generateCorridors(std::vector<float> pixels);
@@ -57,6 +57,7 @@ private:
 	Oil* oil;
 	Napalm* napalm;
 	bool isFirstRun{ true };
+	ThreadPool threadPool;
 };
 
 #endif // GAME_HPP
