@@ -7,7 +7,7 @@
 #include "Rendering.hpp"
 #include "../Utility/GlobalVariables.hpp"
 Game::Game()
-	: isRunning(true), worldGeneration(), threadPool(4)
+	: isRunning(true), worldGeneration(), threadPool(2)
 {
 	sand = new Sand();
 	water = new Water();
@@ -166,8 +166,8 @@ void Game::worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playe
 
 void Game::MultiThreadWorker(const int startIndex, const int startYIndex,
 	const Vector2D<float>& playerCoords) {
-	for (int i = startIndex; i < GlobalVariables::worldChunkWidth; i += 2) { // Corrected loop
-		for (int j = startYIndex; j < GlobalVariables::worldChunkWidth; j += 2) { // Corrected loop
+	for (int i = startIndex; i < GlobalVariables::worldChunkWidth; i += 2) {
+		for (int j = startYIndex; j < GlobalVariables::worldChunkWidth; j += 2) {
 			chunkBoundingBox& box = worldGeneration.getVecStore()[{i, j}].getDirtyRect();
 			if (isFirstRun || box.getIsDirty()) {
 				threadPool.enqueue([this, &box, playerCoords, i, j]() {
@@ -199,23 +199,34 @@ void Game::update() {
 	worldGeneration.clearPixelProcessed();
 }
 
+void Game::RenderThreads() {
+
+	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
+		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
+			Chunk& chunk = worldGeneration.getVecStore()[{i, j}];
+			auto& rect = chunk.getDirtyRect();
+			if (!isFirstRun && !rect.getIsDirty()) {
+				rect.reset();
+				continue;
+			}
+			threadPool.enqueue([=, &chunk, &rect]() {
+				Rendering::renderGrid(chunk, player, { i, j });
+				rect.reset();
+
+				});
+		}
+	}
+
+}
+
 void Game::render()
 {
-	std::unordered_map<Vector2D<int>, Chunk>& temp = worldGeneration.getVecStore();
-	for (auto& mapEntry : temp) {
-
-		Chunk& vec2D = mapEntry.second;
-		Vector2D globalCoords = mapEntry.first;
-		auto& rect = vec2D.getDirtyRect();
-		if (!isFirstRun && !rect.getIsDirty()) {
-			rect.reset();
-			return;
-		}
-
-		Rendering::renderGrid(vec2D, player, globalCoords);
-		rect.reset();
-
+	RenderThreads();
+	threadPool.wait_for_all_tasks();
+	for (auto& ch : worldGeneration.getVecStore()) {
+		ch.second.SDLRenderFunctions(Rendering::getRenderer());
 	}
+
 
 	isFirstRun == false;
 	Rendering::renderPlayer(player);

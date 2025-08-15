@@ -29,6 +29,7 @@ public:
 	uint32_t* getPixels();
 
 	void resetPixels(const uint32_t& blackColor);
+	void SDLRenderFunctions(SDL_Renderer* renderer);
 private:
 	Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize];
 	Vector2D<int> globalCoords;
@@ -36,6 +37,7 @@ private:
 	SDL_Texture* texture;
 	uint32_t* pixels;
 	bool firstRender{ true };
+	SDL_Rect dstRect;
 };
 
 #endif /* CHUNK */

@@ -103,7 +103,7 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 	}
 
 
-	SDL_Rect dstRect = {
+	dstRect = {
 		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,
 		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY,
 		GlobalVariables::chunkSize,
@@ -117,8 +117,7 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 
 	// Move opposite to player
 
-	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
-	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+
 
 }
 chunkBoundingBox& Chunk::getDirtyRect() { return dirtyRec; };
@@ -137,4 +136,9 @@ void Chunk::resetPixels(const uint32_t& blackColor) {
 }
 Pixel** Chunk::operator[](int x) {
 	return vec[x];
+}
+
+void Chunk::SDLRenderFunctions(SDL_Renderer* renderer) {
+	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
+	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 }

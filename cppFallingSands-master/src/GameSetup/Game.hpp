@@ -25,6 +25,8 @@ public:
 	Game();
 	~Game();
 	void MultiThreadWorker(const int startIndex, const int startYIndex, const Vector2D<float>& playerCoords);
+	void RenderThreads();
+
 	void init();
 	void handleEvents();
 	void update();
@@ -35,10 +37,8 @@ public:
 	void swapElements(int x, int y, int x2, int y2);
 	double randomnumber();
 	void updateSequence(const int& row, const int& col);
-	void pixelsToBlocks(std::vector<float> pixels);
 	void worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
 
-	void generateCorridors(std::vector<float> pixels);
 private:
 	// int rendererScalex;
 	// int rendererScaley;
