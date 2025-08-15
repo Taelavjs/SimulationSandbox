@@ -19,7 +19,7 @@ public:
 	WorldGeneration();
 	~WorldGeneration();
 	void cleanUp();
-	void generateBlock();
+	void generateBlock(SDL_Renderer* renderer);
 	void pixelsToBlocks(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);
 	void generateCorridors(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);
 	Chunk& getLocalVec();

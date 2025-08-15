@@ -7,6 +7,7 @@
 #include "../../Elements/Smoke.hpp"
 #include "../../Elements/Water.hpp"
 #include "../../Utility/GlobalVariables.hpp"
+#include "../../Algorithm/MarchingSquares.hpp"
 #include <map>
 #include <iomanip> 
 #include <iostream>
@@ -34,7 +35,7 @@ WorldGeneration::~WorldGeneration() {
 	worldVecStore.clear();
 }
 
-void WorldGeneration::generateBlock() {
+void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
 		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
 			Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize] = { nullptr };
@@ -52,10 +53,36 @@ void WorldGeneration::generateBlock() {
 	std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
-		Chunk& chunk = mapEntry.second;
-		pixelsToBlocks(noiseMap, mapEntry.first, chunk);
-		generateCorridors(terrainMap, mapEntry.first, chunk);
+		Chunk& currentChunk = mapEntry.second;
+		pixelsToBlocks(noiseMap, mapEntry.first, currentChunk);
+		generateCorridors(terrainMap, mapEntry.first, currentChunk);
+
+		// Get the coordinates of the current chunk
+		const Vector2D<int> currentCoords = mapEntry.first;
+
+		// Attempt to find the neighboring chunks. If not found, use nullptr.
+		Chunk* rightChunk = nullptr;
+		auto itRight = worldVecStore.find({ currentCoords.x + 1, currentCoords.y });
+		if (itRight != worldVecStore.end()) {
+			rightChunk = &itRight->second;
+		}
+
+		Chunk* downChunk = nullptr;
+		auto itDown = worldVecStore.find({ currentCoords.x, currentCoords.y + 1 });
+		if (itDown != worldVecStore.end()) {
+			downChunk = &itDown->second;
+		}
+
+		Chunk* rightDownChunk = nullptr;
+		auto itRightDown = worldVecStore.find({ currentCoords.x + 1, currentCoords.y + 1 });
+		if (itRightDown != worldVecStore.end()) {
+			rightDownChunk = &itRightDown->second;
+		}
+
+		currentChunk.setLines(MarchingSquares::run(currentChunk, rightChunk, downChunk, rightDownChunk), renderer);
 	}
+
+
 }
 
 
@@ -216,9 +243,8 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	// Helper function to get chunk and local coordinates
 	auto getCoords = [&](const Vector2D<int>& globalPos) {
 		Vector2D<int> chunkCoord(
-			static_cast<int>(std::floor(static_cast<float>(globalPos.x) / GlobalVariables::chunkSize)),
-			static_cast<int>(std::floor(static_cast<float>(globalPos.y) / GlobalVariables::chunkSize))
-		);
+			std::floor(globalPos.x) / GlobalVariables::chunkSize,
+			std::floor(globalPos.y) / GlobalVariables::chunkSize);
 		Vector2D<int> localCoord(
 			(globalPos.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize,
 			(globalPos.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize

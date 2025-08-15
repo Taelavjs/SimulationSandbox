@@ -3,7 +3,7 @@
 #include "../../Elements/BaseElements/Pixel.hpp"
 #include "../../Utility/GlobalVariables.hpp"
 Chunk::Chunk(Vector2D<int> chunkGlobalCoords)
-	:globalCoords(chunkGlobalCoords), texture(nullptr)
+	:globalCoords(chunkGlobalCoords), texture(nullptr), lineTexture(nullptr)
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
 	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
@@ -18,6 +18,7 @@ Chunk::Chunk()
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
 	texture = nullptr;
+	lineTexture = nullptr;
 	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
 		for (int j = 0; j < GlobalVariables::chunkSize; j++) {
 			vec[i][j] = nullptr;
@@ -26,6 +27,7 @@ Chunk::Chunk()
 }
 void Chunk::CreateBaseTexture(SDL_Renderer* renderer) {
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+
 }
 
 Chunk::~Chunk() {
@@ -37,6 +39,9 @@ Chunk::~Chunk() {
 
 	if (texture) {
 		SDL_DestroyTexture(texture);
+	}
+	if (lineTexture) {
+		SDL_DestroyTexture(lineTexture);
 	}
 	delete[] pixels;
 }
@@ -141,4 +146,76 @@ Pixel** Chunk::operator[](int x) {
 void Chunk::SDLRenderFunctions(SDL_Renderer* renderer) {
 	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+}
+
+void Chunk::setLines(std::stack<std::pair<Vector2D<float>, Vector2D<float>>> _lines, SDL_Renderer* renderer) {
+	lines = _lines;
+
+	if (lineTexture == nullptr) {
+		createLineTexture(renderer);
+	}
+	if (renderer == nullptr) {
+		// Handle the error gracefully, e.g., by logging a message
+		return;
+	}
+	SDL_SetRenderTarget(renderer, lineTexture);
+
+	// Set the drawing color for your lines
+	Uint8 r{}, g{}, b{}, a{};
+	SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// Draw the lines onto the texture
+	while (!lines.empty()) {
+		std::pair<Vector2D<float>, Vector2D<float>> line = lines.top();
+		SDL_RenderDrawLineF(renderer,
+			line.first.x,
+			line.first.y,
+			line.second.x,
+			line.second.y);
+		lines.pop();
+	}
+
+	// Reset the render target back to the default (the screen)
+	SDL_SetRenderTarget(renderer, NULL);
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
+}
+
+void Chunk::drawLines(SDL_Renderer* renderer, const SDL_Rect& playersRect) {
+	if (lineTexture == nullptr) {
+		return; // Nothing to draw
+	}
+
+	// --- Calculate Destination Rectangle ---
+	// This logic must be identical to the main `render` function to ensure
+	// the line texture is drawn in the exact same position as the pixel texture.
+
+	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
+	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
+
+	SDL_Rect lineDstRect = {
+		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,
+		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY,
+		GlobalVariables::chunkSize,
+		GlobalVariables::chunkSize
+	};
+
+	// Adjust destination rectangle based on player's position to simulate a camera
+	lineDstRect.x -= playersRect.x - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
+	lineDstRect.y -= playersRect.y - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
+
+	// Render the pre-drawn line texture to the calculated position on the screen
+	SDL_RenderCopy(renderer, lineTexture, NULL, &lineDstRect);
+}
+
+
+void Chunk::createLineTexture(SDL_Renderer* renderer) {
+	if (lineTexture != nullptr) {
+		SDL_DestroyTexture(lineTexture);
+	}
+	lineTexture = SDL_CreateTexture(renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		GlobalVariables::chunkSize,
+		GlobalVariables::chunkSize);
 }

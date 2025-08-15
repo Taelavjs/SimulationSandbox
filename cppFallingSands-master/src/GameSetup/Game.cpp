@@ -38,16 +38,18 @@ Game::~Game()
 
 void Game::init()
 {
-	worldGeneration.generateBlock();
 	const char* playerSpritePath{ "C:\\Users\\taela\\source\\repos\\FallingSandsSumoSimulation\\cppFallingSands-master\\Sprites\\AnimationSheet_Character.png" };
 
 	Rendering::setValues();
+
 	int width{ 32 };
 	int height{ 32 };
 	int rows{ 9 };
 	int cols{ 8 };
 	Sprite* playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
 	player = new Player(playerSprite);
+	worldGeneration.generateBlock(Rendering::getRenderer());
+
 
 }
 
@@ -205,14 +207,16 @@ void Game::RenderThreads() {
 		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
 			Chunk& chunk = worldGeneration.getVecStore()[{i, j}];
 			auto& rect = chunk.getDirtyRect();
+
 			if (!isFirstRun && !rect.getIsDirty()) {
+				//chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
 				rect.reset();
 				continue;
 			}
 			threadPool.enqueue([=, &chunk, &rect]() {
+				//chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
 				Rendering::renderGrid(chunk, player, { i, j });
 				rect.reset();
-
 				});
 		}
 	}
