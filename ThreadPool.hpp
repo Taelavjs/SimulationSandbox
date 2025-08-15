@@ -8,6 +8,12 @@
 
 using namespace std;
 
+/*
+	https://www.geeksforgeeks.org/cpp/thread-pool-in-cpp/
+	Creadit to GeeksForGeeks
+	This is an edited version of their threadpool
+*/
+
 // Class that represents a simple thread pool
 class ThreadPool {
 public:
