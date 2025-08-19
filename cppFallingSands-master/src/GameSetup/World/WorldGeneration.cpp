@@ -58,7 +58,7 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 		generateCorridors(terrainMap, mapEntry.first, currentChunk);
 
 		const Vector2D<int> currentCoords = mapEntry.first;
-		currentChunk.setLines(MarchingSquares::run(currentChunk), renderer);
+		currentChunk.createLinesTexture(MarchingSquares::run(currentChunk), renderer);
 	}
 
 

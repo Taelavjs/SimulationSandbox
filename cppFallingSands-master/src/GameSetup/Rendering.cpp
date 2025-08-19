@@ -83,8 +83,8 @@ void Rendering::castRays(uint32_t* pixels, SDL_Renderer* renderer, const Pixel*&
 }
 
 void Rendering::renderGrid(Chunk& vec, Player* player, Vector2D<int> globalCoords) {
-	const SDL_Rect& playerPos = player->getPlayerRect();
-	vec.render(renderer, playerPos);
+	//const SDL_Rect& playerPos = player->getPlayerRect();
+	//vec.render(renderer, playerPos);
 
 }
 SDL_Renderer* Rendering::getRenderer() {

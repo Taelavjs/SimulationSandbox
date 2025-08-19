@@ -2,8 +2,11 @@
 #include "WorldGeneration.hpp"
 #include "../../Elements/BaseElements/Pixel.hpp"
 #include "../../Utility/GlobalVariables.hpp"
+
+// Instantion and deletion
+
 Chunk::Chunk(Vector2D<int> chunkGlobalCoords)
-	:globalCoords(chunkGlobalCoords), texture(nullptr), lineTexture(nullptr)
+	:globalCoords(chunkGlobalCoords), texture(nullptr), linesTexture(nullptr)
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
 	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
@@ -18,15 +21,18 @@ Chunk::Chunk()
 {
 	pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
 	texture = nullptr;
-	lineTexture = nullptr;
+	linesTexture = nullptr;
 	for (int i = 0; i < GlobalVariables::chunkSize; i++) {
 		for (int j = 0; j < GlobalVariables::chunkSize; j++) {
 			vec[i][j] = nullptr;
 		}
 	}
 }
-void Chunk::CreateBaseTexture(SDL_Renderer* renderer) {
-	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+void Chunk::CreateBaseTextures(SDL_Renderer* renderer) {
+	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+	if (linesTexture == nullptr) {
+		linesTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+	}
 
 }
 
@@ -40,31 +46,20 @@ Chunk::~Chunk() {
 	if (texture) {
 		SDL_DestroyTexture(texture);
 	}
-	if (lineTexture) {
-		SDL_DestroyTexture(lineTexture);
-	}
 	delete[] pixels;
 }
 const Vector2D<int>& Chunk::getGlobalCoords() {
 	return globalCoords;
 }
 
+// Render functions
 void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
-	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
-	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
+
 
 	if (texture == nullptr) {
-		CreateBaseTexture(renderer);
+		CreateBaseTextures(renderer);
 	}
-
-	if (texture == nullptr)
-	{
-		std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-		return;
-	}
-
 	resetPixels(0xFF000000);
-	//if (dirtyRec.getIsDirty()) {
 	firstRender = false;
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
 	{
@@ -78,9 +73,9 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 			vec[row][col]->setProcessed(false);
 		}
 	}
-	//}
+}
 
-
+void Chunk::RenderDirtyRectToTexture(const SDL_Rect& playerRect) {
 	const uint32_t greenColor = 0xFF00FF00;
 	chunkBoundingBox& dirtyRect = getDirtyRect();
 	const int& minX = dirtyRect.getMinX();
@@ -106,8 +101,12 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 			}
 		}
 	}
+	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
+}
 
-
+void Chunk::UpdateChunkRenderLocation(const SDL_Rect& playerRect) {
+	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
+	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
 	dstRect = {
 		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputX,
 		((GlobalVariables::chunkSize / GlobalVariables::worldChunkWidth)) + globalOffputY,
@@ -115,57 +114,35 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 		GlobalVariables::chunkSize
 	};
 
-	// Change 'playerRect.x' and 'playerRect.y' to 'playerRect->x' and 'playerRect->y'
 	dstRect.x -= playerRect.x - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
 	dstRect.y -= playerRect.y - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
-
-
-	// Move opposite to player
-
-
-
 }
-chunkBoundingBox& Chunk::getDirtyRect() { return dirtyRec; };
-SDL_Texture* Chunk::getTexture() { return texture; };
-uint32_t* Chunk::getPixels() { return pixels; };
 
-int Chunk::size() {
-	//if (vec.empty() || vec[0].empty()) {
-	//	return 0;
-	//}
-	return GlobalVariables::chunkSize;
-}
 void Chunk::resetPixels(const uint32_t& blackColor) {
-	//std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
-
-}
-Pixel** Chunk::operator[](int x) {
-	return vec[x];
+	std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
 }
 
-void Chunk::SDLRenderFunctions(SDL_Renderer* renderer) {
-	SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
+
+void Chunk::SDLRenderFunctions(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+	SDL_RenderCopy(renderer, linesTexture, NULL, &dstRect);
+
+
 }
 
-void Chunk::setLines(std::stack<std::pair<Vector2D<float>, Vector2D<float>>> _lines, SDL_Renderer* renderer) {
+void Chunk::createLinesTexture(std::stack<std::pair<Vector2D<float>, Vector2D<float>>> _lines, SDL_Renderer* renderer) {
 	lines = _lines;
+	if (linesTexture == nullptr) {
+		CreateBaseTextures(renderer);
+	}
 
-	if (lineTexture == nullptr) {
-		createLineTexture(renderer);
-	}
-	if (renderer == nullptr) {
-		// Handle the error gracefully, e.g., by logging a message
-		return;
-	}
-	SDL_SetRenderTarget(renderer, lineTexture);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // transparent black
+	SDL_SetRenderTarget(renderer, linesTexture);
 	SDL_RenderClear(renderer);
-	// Set the drawing color for your lines
 	Uint8 r{}, g{}, b{}, a{};
 	SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	// Draw the lines onto the texture
 	while (!lines.empty()) {
 		std::pair<Vector2D<float>, Vector2D<float>> line = lines.top();
 		SDL_RenderDrawLineF(renderer,
@@ -175,41 +152,21 @@ void Chunk::setLines(std::stack<std::pair<Vector2D<float>, Vector2D<float>>> _li
 			line.second.y);
 		lines.pop();
 	}
+	SDL_RenderPresent(renderer);
 
-	// Reset the render target back to the default (the screen)
 	SDL_SetRenderTarget(renderer, NULL);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 }
 
-void Chunk::drawLines(SDL_Renderer* renderer, const SDL_Rect& playersRect) {
-	if (lineTexture == nullptr) {
-		return;
-	}
-
-	const int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
-	const int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
-
-	SDL_Rect lineDstRect = {
-		globalOffputX,
-		globalOffputY,
-		GlobalVariables::chunkSize,
-		GlobalVariables::chunkSize
-	};
-	lineDstRect.x -= playersRect.x - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
-	lineDstRect.y -= playersRect.y - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2);
-
-	SDL_RenderCopy(renderer, lineTexture, NULL, &lineDstRect);
+// GETTERS
+int Chunk::size() {
+	return GlobalVariables::chunkSize;
 }
-
+Pixel** Chunk::operator[](int x) { return vec[x]; }
+chunkBoundingBox& Chunk::getDirtyRect() { return dirtyRec; };
+SDL_Texture* Chunk::getTexture() { return texture; };
+uint32_t* Chunk::getPixels() { return pixels; };
 
 void Chunk::createLineTexture(SDL_Renderer* renderer) {
-	if (lineTexture != nullptr) {
-		SDL_DestroyTexture(lineTexture);
-	}
-	lineTexture = SDL_CreateTexture(renderer,
-		SDL_PIXELFORMAT_RGBA8888,
-		SDL_TEXTUREACCESS_TARGET,
-		GlobalVariables::chunkSize,
-		GlobalVariables::chunkSize);
 }

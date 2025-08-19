@@ -6,8 +6,8 @@
 class GlobalVariables {
 public:
 	static const int fps;
-	const static inline int chunkSize{ 16 };
-	static const int worldChunkWidth{ 28 };
+	const static inline int chunkSize{ 32 };
+	static const int worldChunkWidth{ 14 };
 	static const int rendererScale;
 	static const std::string title;
 	static const int subChunkSizeX;

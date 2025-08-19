@@ -6,6 +6,9 @@
 #include "../Textures/Sprite.hpp"
 #include "Rendering.hpp"
 #include "../Utility/GlobalVariables.hpp"
+
+// INSTANTIATION AND DELETION
+
 Game::Game()
 	: isRunning(true), worldGeneration(), threadPool(2)
 {
@@ -52,6 +55,8 @@ void Game::init()
 
 
 }
+
+// Player Clicking
 
 void SquarePlace(Chunk& vec, int x, int y, Pixel* elm)
 {
@@ -124,6 +129,8 @@ void Game::handleEvents()
 	}
 	SDL_PumpEvents();
 }
+
+// UPDATING  GRID
 
 void Game::updateSequence(const int& row, const int& col)
 {
@@ -202,36 +209,18 @@ void Game::update() {
 }
 
 void Game::RenderThreads() {
-
-	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
-		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
-			Chunk& chunk = worldGeneration.getVecStore()[{i, j}];
-			auto& rect = chunk.getDirtyRect();
-
-			if (!isFirstRun && !rect.getIsDirty()) {
-				chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
-				rect.reset();
-				continue;
-			}
-			threadPool.enqueue([=, &chunk, &rect]() {
-				Rendering::renderGrid(chunk, player, { i, j });
-				rect.reset();
-				});
-			chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
-
-		}
-	}
-
 }
 
 void Game::render()
 {
-	RenderThreads();
-	threadPool.wait_for_all_tasks();
 	for (auto& ch : worldGeneration.getVecStore()) {
-		ch.second.SDLRenderFunctions(Rendering::getRenderer());
+		auto& rect = ch.second.getDirtyRect();
+		ch.second.render(Rendering::getRenderer(), player->getPlayerRect());
+		ch.second.UpdateChunkRenderLocation(player->getPlayerRect());
+		ch.second.RenderDirtyRectToTexture(player->getPlayerRect());
+		ch.second.SDLRenderFunctions(Rendering::getRenderer(), player->getPlayerRect());
+		rect.reset();
 	}
-
 
 	isFirstRun == false;
 	Rendering::renderPlayer(player);
