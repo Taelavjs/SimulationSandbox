@@ -135,17 +135,17 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D<int> 
 				continue;
 			}
 			double rng = getRandomDouble(0, 1);
-			if (rng < 0.2 / 6) {
+			if (rng < 0.2 / 3) {
 				vec[row][col] = water->clone();
 			}
-			else if (rng < 0.4 / 6)
+			else if (rng < 0.4 / 3)
 			{
 				vec[row][col] = sand->clone();
 			}
-			else if (rng < 0.6 / 6) {
+			else if (rng < 0.6 / 3) {
 				vec[row][col] = oil->clone();
 			}
-			else if (rng < 0.8 / 6) {
+			else if (rng < 0.8 / 3) {
 				vec[row][col] = napalm->clone();
 			}
 		}
@@ -179,6 +179,22 @@ Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 
 // Make the class able to give the correct chunk using global coordinates
 // Rather than swapping between global and local, much easier
+void WorldGeneration::forceUpdatePixelFromGlobal(const Vector2D<int>& position) {
+	Vector2D<int> chunkCoord(0, 0);
+	Vector2D<int> localCoord(0, 0);
+
+	chunkCoord.x = position.x / GlobalVariables::chunkSize;
+	chunkCoord.y = position.y / GlobalVariables::chunkSize;
+
+	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
+	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
+
+	auto chunkIt = worldVecStore.find(chunkCoord);
+	if (chunkIt != worldVecStore.end()) {
+		return chunkIt->second.getDirtyRect().expand(localCoord.x, localCoord.y);
+	}
+}
+
 
 Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
 	Vector2D<int> chunkCoord(0, 0);
@@ -244,12 +260,10 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	Chunk& ch2 = worldVecStore[chunkCoord2];
 	ch1.getDirtyRect().expand(localCoord1.x, localCoord1.y);
 	ch2.getDirtyRect().expand(localCoord2.x, localCoord2.y);
-	// Check if chunks are empty, although the find() check above should handle this
 	if (ch1.size() == 0 || ch2.size() == 0) {
 		return;
 	}
 
-	// Set "processed" flag for non-null pixels
 	if (ch1[localCoord1.y][localCoord1.x] != nullptr) {
 		ch1[localCoord1.y][localCoord1.x]->setProcessed(true);
 	}
@@ -257,24 +271,14 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 		ch2[localCoord2.y][localCoord2.x]->setProcessed(true);
 	}
 
-	// Perform the swap
 	Pixel* temp = ch1[localCoord1.y][localCoord1.x];
 	ch1[localCoord1.y][localCoord1.x] = ch2[localCoord2.y][localCoord2.x];
 	ch2[localCoord2.y][localCoord2.x] = temp;
-
-
 }
 
 void WorldGeneration::burntSmoke(const int row, const int col) {
-	// Get a reference to the pointer in the world's data structure
 	Pixel*& pixelRef = getPixelFromGlobal(Vector2D(col, row));
-
-	// Delete the old pixel
 	delete pixelRef;
-
-	// Assign the new pixel to the same pointer reference
 	pixelRef = smoke->clone();
-
-	// Set the processed flag on the new pixel
 	pixelRef->setProcessed(true);
 }

@@ -58,60 +58,46 @@ void Game::init()
 
 // Player Clicking
 
-void SquarePlace(Chunk& vec, int x, int y, Pixel* elm)
-{
-	int numToPlace{ 1 };
-	for (int j = x - numToPlace; j < x + numToPlace; j++)
-	{
-		for (int k = y - numToPlace; k < y + numToPlace; k++)
-		{
-			if (j < 0 || k < 0 || k >= GlobalVariables::chunkSize || j >= GlobalVariables::chunkSize)
-				continue;
-			// if(rand() % 2 == 0) continue;
 
-			delete vec[k][j];         // Delete existing object to avoid memory leak
-			vec[k][j] = elm->clone(); // Assign new clone
-		}
-	}
-}
 
 void Game::handleEvents()
 {
 	const Uint8* e = SDL_GetKeyboardState(&numKeys);
-	Chunk& localChunk = worldGeneration.getLocalVec();
 
-	int x{}, y{};
+	int xScreen{}, yScreen{};
 	if (e)
 	{
-		SDL_GetMouseState(&x, &y);
+		SDL_GetMouseState(&xScreen, &yScreen);
+		int x = static_cast<int>((xScreen / GlobalVariables::rendererScale) - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2) + player->getPlayerRect().x);
+		int y = static_cast<int>((yScreen / GlobalVariables::rendererScale) - ((GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2) + player->getPlayerRect().y);
 		if (e[SDL_SCANCODE_P])
 		{
 			setRunning(false);
 		}
-		//else if (e[SDL_SCANCODE_A])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, water);
-		//}
-		//else if (e[SDL_SCANCODE_D])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, rock);
-		//}
-		//else if (e[SDL_SCANCODE_S])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, sand);
-		//}
-		//else if (e[SDL_SCANCODE_W])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, smoke);
-		//}
-		//else if (e[SDL_SCANCODE_Q])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, oil);
-		//}
-		//else if (e[SDL_SCANCODE_F])
-		//{
-		//	SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, napalm);
-		//}
+		else if (e[SDL_SCANCODE_A])
+		{
+			playerPlacedPixelsSquare(x, y, water);
+		}
+		else if (e[SDL_SCANCODE_D])
+		{
+			playerPlacedPixelsSquare(x, y, oil);
+		}
+		else if (e[SDL_SCANCODE_S])
+		{
+			playerPlacedPixelsSquare(x, y, napalm);
+		}
+		else if (e[SDL_SCANCODE_W])
+		{
+			playerPlacedPixelsSquare(x, y, sand);
+		}
+		else if (e[SDL_SCANCODE_Q])
+		{
+			playerPlacedPixelsSquare(x, y, smoke);
+		}
+		else if (e[SDL_SCANCODE_F])
+		{
+			playerPlacedPixelsSquare(x, y, rock);
+		}
 
 		for (int i = 0; i < numKeys; ++i) {
 			if (e[i] == 1) {
@@ -130,6 +116,21 @@ void Game::handleEvents()
 	SDL_PumpEvents();
 }
 
+void Game::playerPlacedPixelsSquare(const int x, const int y, Pixel* type) {
+	for (int i = x - 10; i < x + 10; i++) {
+		for (int j = y - 10; j < y + 10; j++) {
+			if (i < 0 || i >= GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth ||
+				j < 0 || j >= GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) continue;
+			Pixel*& pix = worldGeneration.getPixelFromGlobal({ i, j });
+			if (pix != nullptr) {
+				delete pix;
+			}
+			pix = type->clone();
+			worldGeneration.forceUpdatePixelFromGlobal({ i, j });
+		}
+	}
+}
+
 // UPDATING  GRID
 
 void Game::updateSequence(const int& row, const int& col)
@@ -141,6 +142,10 @@ void Game::updateSequence(const int& row, const int& col)
 		return;
 	if (pixel->getIsFlammable())
 	{
+		if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->getOnFire()) {
+			worldGeneration.forceUpdatePixelFromGlobal({ col, row });
+		}
+
 		if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->fireTick(worldGeneration, row, col))
 		{
 			worldGeneration.burntSmoke(row, col);

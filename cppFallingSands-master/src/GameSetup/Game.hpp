@@ -29,12 +29,12 @@ public:
 
 	void init();
 	void handleEvents();
+	void playerPlacedPixelsSquare(const int x, const int y, Pixel* type);
 	void update();
 	void render();
 	void clean();
 	void setRunning(bool running) { isRunning = running; }
 	bool getRunning() const { return isRunning; }
-	void swapElements(int x, int y, int x2, int y2);
 	double randomnumber();
 	void updateSequence(const int& row, const int& col);
 	void worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
