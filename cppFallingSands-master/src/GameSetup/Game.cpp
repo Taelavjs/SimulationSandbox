@@ -209,15 +209,16 @@ void Game::RenderThreads() {
 			auto& rect = chunk.getDirtyRect();
 
 			if (!isFirstRun && !rect.getIsDirty()) {
-				//chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
+				chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
 				rect.reset();
 				continue;
 			}
 			threadPool.enqueue([=, &chunk, &rect]() {
-				//chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
 				Rendering::renderGrid(chunk, player, { i, j });
 				rect.reset();
 				});
+			chunk.drawLines(Rendering::getRenderer(), player->getPlayerRect());
+
 		}
 	}
 

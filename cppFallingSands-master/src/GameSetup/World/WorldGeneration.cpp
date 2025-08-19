@@ -57,29 +57,8 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 		pixelsToBlocks(noiseMap, mapEntry.first, currentChunk);
 		generateCorridors(terrainMap, mapEntry.first, currentChunk);
 
-		// Get the coordinates of the current chunk
 		const Vector2D<int> currentCoords = mapEntry.first;
-
-		// Attempt to find the neighboring chunks. If not found, use nullptr.
-		Chunk* rightChunk = nullptr;
-		auto itRight = worldVecStore.find({ currentCoords.x + 1, currentCoords.y });
-		if (itRight != worldVecStore.end()) {
-			rightChunk = &itRight->second;
-		}
-
-		Chunk* downChunk = nullptr;
-		auto itDown = worldVecStore.find({ currentCoords.x, currentCoords.y + 1 });
-		if (itDown != worldVecStore.end()) {
-			downChunk = &itDown->second;
-		}
-
-		Chunk* rightDownChunk = nullptr;
-		auto itRightDown = worldVecStore.find({ currentCoords.x + 1, currentCoords.y + 1 });
-		if (itRightDown != worldVecStore.end()) {
-			rightDownChunk = &itRightDown->second;
-		}
-
-		currentChunk.setLines(MarchingSquares::run(currentChunk, rightChunk, downChunk, rightDownChunk), renderer);
+		currentChunk.setLines(MarchingSquares::run(currentChunk), renderer);
 	}
 
 
