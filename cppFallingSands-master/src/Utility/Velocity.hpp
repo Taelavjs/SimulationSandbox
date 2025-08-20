@@ -23,6 +23,11 @@ struct Vector2D {
 		return (x == other.x) && (y == other.y);
 	}
 
+	Vector2D operator+(const Vector2D<T>& other) const {
+		return Vector2D<T>{ x + other.x, y + other.y };
+	}
+
+
 
 };
 namespace std {

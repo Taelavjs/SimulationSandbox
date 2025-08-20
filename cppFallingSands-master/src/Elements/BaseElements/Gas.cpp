@@ -39,9 +39,9 @@ void Gas::update(int row, int col, const int& vecWidth, const int& vecHeight, Wo
 		}
 		else if (row - 1 >= 0 && pixBelow != nullptr && (pixBelow->getIsMoveable()) && !pixBelow->getIsGas()) {
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row - 1));
-			row -= 1; // Update row after moving
+			row -= 1;
 			x_direction = 0;
-			moved = true; // Indicate a move was made
+			moved = true;
 			blocksFallen++;
 		}
 		else {

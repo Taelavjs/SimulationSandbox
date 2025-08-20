@@ -89,12 +89,12 @@ void Player::playerForcesInputs() {
 void Player::resetPlayerColliders() {
 	playerWorldRect.x = playerPosition.x;
 	playerWorldRect.y = playerPosition.y + 4;
-	playerWorldRect.w = 8;
+	playerWorldRect.w = 4;
 	playerWorldRect.h = 15;
 
 	playerWorldFeetRect.x = playerPosition.x - 2;
 	playerWorldFeetRect.y = playerPosition.y + playerScale.y;
-	playerWorldFeetRect.w = 12;
+	playerWorldFeetRect.w = 8;
 	playerWorldFeetRect.h = 6;
 
 	leftDirection.x = playerWorldRect.x - 1;
