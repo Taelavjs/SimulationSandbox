@@ -22,6 +22,8 @@ public:
 	const Vector2D<float>& getDimensions();
 	const SDL_Rect& getPlayerRect();
 	void renderPlayer(SDL_Renderer* renderer, int screenWidth);
+	void renderDebugRects(SDL_Renderer* renderer);
+
 	void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
 	std::stack<SDL_Rect> getStackRender();
 
@@ -31,21 +33,20 @@ public:
 	Velocity velocity;
 
 private:
-	void checkAreaCollision(bool& isBlockInPlayer, std::vector<SDL_Rect>& collisions, WorldGeneration& worldGeneration);
+	bool checkAreaCollision(WorldGeneration& worldGeneration);
+	bool checkFeetCollision(WorldGeneration& worldGeneration);
+	int highestFeetCollisionPoint(WorldGeneration& worldGeneration);
+	SDL_Rect renderWorldToScreenCoords(SDL_Rect& rectToRender);
 	bool isFlipTexture();
 	void handleCollision(SDL_Rect* colliderRect);
 	void playerForcesInputs();
 	void collisionHandler(WorldGeneration& worldGeneration);
 	void resetPlayerColliders();
+	std::vector<SDL_Rect> collisions;
 
 private:
-	SDL_Rect playerAABB;
-	SDL_Rect groundedRect;
 	std::stack<SDL_Rect> stckToRender;
 	Sprite* playerSprite;
-	Vector2D<float> position;
-	Vector2D<float> validPosition;
-	Vector2D<float> playerCenterPosition;
 	Vector2D<float> playerScale;
 	bool dLeft{ false }, dRight{ false }, dUp{ false }, dDown{ false };
 	bool isFlipped{ false };
@@ -55,7 +56,15 @@ private:
 	playerStates prev;
 
 	float jumpDelay{ 0.5f };
-	float lastTimeJumpedAccumulated{ 0.0f };
+	float lastTimeJumpedAccumulated{ 1.0f };
+
+private:
+	Vector2D<float> playerPosition{ 0.0f, -22.0f };
+	Vector2D<float> lastValidPosition{ 0.0f, -22.0f };
+	SDL_Rect playerWorldRect;
+	SDL_Rect playerWorldFeetRect;
+	SDL_Rect leftDirection;
+	SDL_Rect rightDirection;
 };
 
 #endif /* PLAYER_HPP */
