@@ -22,10 +22,10 @@ struct MarchingSquares {
 
 
 				int squareIndex = 0;
-				if (topLeft != nullptr && !topLeft->getIsMoveable())       squareIndex += 1;
-				if (topRight != nullptr && !topRight->getIsMoveable())     squareIndex += 2;
-				if (bottomLeft != nullptr && !bottomLeft->getIsMoveable())   squareIndex += 4;
-				if (bottomRight != nullptr && !bottomRight->getIsMoveable())  squareIndex += 8;
+				if (topLeft != nullptr && !topLeft->type->isMoveable)       squareIndex += 1;
+				if (topRight != nullptr && !topRight->type->isMoveable)     squareIndex += 2;
+				if (bottomLeft != nullptr && !bottomLeft->type->isMoveable)   squareIndex += 4;
+				if (bottomRight != nullptr && !bottomRight->type->isMoveable)  squareIndex += 8;
 				results[i][j] = squareIndex;
 			}
 		}

@@ -6,18 +6,17 @@ class WorldGeneration;
 
 class SolidDynamic : public Moveable {
 public:
-
-protected:
-	SolidDynamic();
+	SolidDynamic(const PixelType* type);
 	virtual ~SolidDynamic();
 protected:
-	virtual void update(int row, int col, const int& vecWidth, const int& vecHeight, WorldGeneration& worldGeneration);
-	virtual void xDisperse(Chunk& vec, int row, int col, int xDispersion, int xDirection, int& res);
-	bool checkMoveableMat(Pixel* space);
-	int x_direction{ 0 };
-	int yVelocity{ 1 };
-	int xVelocity{ 1 };
-};
+	virtual void update(int row, int col, WorldGeneration& worldGeneration) override;
 
+	void xDisperse(int row, int col, int xDispersion, int xDirection, WorldGeneration& worldGeneration, int& res);
+
+	bool checkMoveableMat(Pixel* space);
+
+private:
+	int x_direction{ 0 };
+};
 
 #endif /* SOLIDDYNAMIC_HPP */

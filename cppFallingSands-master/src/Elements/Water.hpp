@@ -1,16 +1,15 @@
-#ifndef WATER_hpp
-#define WATER_hpp
+#ifndef WATER_HPP
+#define WATER_HPP
+
 #include "BaseElements/Liquid.hpp"
-class Pixel;
+
 class Water : public Liquid {
 public:
-	Water();
-	virtual ~Water();
-	virtual Pixel* clone() const;
-	int getDensity() const;
+	Water(const PixelType* type);
+	virtual ~Water() = default;
 
-private:
-	bool movingRight{ false };
+	virtual void update(int row, int col, WorldGeneration& worldGeneration) override;
+
+	virtual Pixel* clone() const override;
 };
-
-#endif /* WATER_hpp */
+#endif /* WATER_HPP */

@@ -1,20 +1,14 @@
-#ifndef Sand_hpp
-#define Sand_hpp
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <vector>
-#include <random>
+#ifndef SAND_HPP
+#define SAND_HPP
+
 #include "BaseElements/SolidDynamic.hpp"
 #include "BaseElements/Pixel.hpp"
-
 class Sand : public SolidDynamic {
 public:
-    Sand();
-    virtual ~Sand();
-    virtual Pixel *clone() const { return new Sand(); }
-
+	Sand(const PixelType* type);
+	virtual ~Sand() = default;
+	virtual void update(int row, int col, WorldGeneration& worldGeneration);
+	virtual Pixel* clone() const override;
 };
 
-
-#endif /* Sand_hpp */
+#endif /* SAND_HPP */

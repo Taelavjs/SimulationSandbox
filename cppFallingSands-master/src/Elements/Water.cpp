@@ -1,15 +1,11 @@
 #include "Water.hpp"
-#include "BaseElements/Pixel.hpp"
+#include <random>
+Water::Water(const PixelType* type) : Liquid(type) {}
 
-Water::Water()
-{
-	setIsLiquid(true);
-	setMass(8);
-	movingRight = (randomNumber() > 0.5f);
-	setHp(30);
-	setColor(SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 50, 180, 200));
+void Water::update(int row, int col, WorldGeneration& worldGeneration) {
+	Liquid::update(row, col, worldGeneration);
 }
 
-Water::~Water() {}
-Pixel* Water::clone() const { return new Water(); }
-int Water::getDensity() const { return 5; };
+Pixel* Water::clone() const {
+	return new Water(type);
+}

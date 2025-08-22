@@ -40,8 +40,21 @@ public:
 	void worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box);
 
 private:
-	// int rendererScalex;
-	// int rendererScaley;
+
+	PixelType rockType;
+	PixelType sandType;
+	PixelType waterType;
+	PixelType oilType;
+	PixelType napalmType;
+	PixelType smokeType;
+
+	Sand* sand;
+	Water* water;
+	Rock* rock;
+	Smoke* smoke;
+	Oil* oil;
+	Napalm* napalm;
+
 	bool isRunning;
 	WorldGeneration worldGeneration;
 
@@ -50,12 +63,6 @@ private:
 	Player* player;
 	Uint8* prevKeys = nullptr;
 	int numKeys = 0;
-	Sand* sand;
-	Water* water;
-	Rock* rock;
-	Smoke* smoke;
-	Oil* oil;
-	Napalm* napalm;
 	bool isFirstRun{ true };
 	ThreadPool threadPool;
 };

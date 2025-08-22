@@ -6,31 +6,43 @@
 #include "../Textures/Sprite.hpp"
 #include "Rendering.hpp"
 #include "../Utility/GlobalVariables.hpp"
+#include <random>
 
 // INSTANTIATION AND DELETION
 
 Game::Game()
-	: isRunning(true), worldGeneration(), threadPool(2)
-{
-	sand = new Sand();
-	water = new Water();
-	rock = new Rock();
-	smoke = new Smoke();
-	oil = new Oil();
-	napalm = new Napalm();
+	: isRunning(true),
+	threadPool(2),
+
+	// Initialize PixelType members directly.
+	rockType(false, false, true, false, false, 20, 10, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 150, 170, 100, 255)),
+	sandType(true, false, true, false, false, 2, 5, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 200, 200, 0, 255)),
+	waterType(true, true, false, false, false, 8, 5, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 50, 180, 200)),
+	oilType(true, true, false, false, true, 14, 10, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 155, 155, 21, 255)),
+	napalmType(true, true, false, false, true, 8, 3, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 50, 25, 200)),
+	smokeType(true, false, false, true, false, 5, 2, 0, SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 130, 130, 130, 255)),
+
+	rock(new Rock(&rockType)),
+	sand(new Sand(&sandType)),
+	water(new Water(&waterType)),
+	oil(new Oil(&oilType)),
+	napalm(new Napalm(&napalmType)),
+	smoke(new Smoke(&smokeType)),
+
+	worldGeneration(sand, water, rock, smoke, napalm, oil) {
+
+	// Initializing keyboard state
 	SDL_GetKeyboardState(&numKeys);
 	prevKeys = new Uint8[numKeys];
 	SDL_PumpEvents();
+
+	// Initializing chunk variables
 	numChunksX = GlobalVariables::chunkSize / GlobalVariables::subChunkSizeY;
 	numChunksY = GlobalVariables::chunkSize / GlobalVariables::subChunkSizeY;
-
 }
 
 Game::~Game()
 {
-	// SDL_DestroyRenderer(renderer);
-	// SDL_DestroyWindow(window);
-	// SDL_Quit();
 	delete sand;
 	delete water;
 	delete rock;
@@ -152,7 +164,7 @@ void Game::updateSequence(const int& row, const int& col)
 			return;
 		};
 	}
-	pixel->update(row, col, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, worldGeneration);
+	pixel->update(row, col, worldGeneration);
 }
 
 void Game::worker(const Vector2D<int>& globalChunk, const Vector2D<float>& playerCoords, chunkBoundingBox& box) {

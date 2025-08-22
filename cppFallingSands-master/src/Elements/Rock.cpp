@@ -1,7 +1,10 @@
 #include "Rock.hpp"
 
-Rock::Rock(){
-    setColor(SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 200, 220, 150, 255)); 
-}
+Rock::Rock(const PixelType* type) : SolidImmoveable(type) {}
 
-Rock::~Rock(){}
+Pixel* Rock::clone() const {
+	return new Rock(type);
+}
+void Rock::update(int row, int col, WorldGeneration& worldGeneration) {
+
+}

@@ -116,7 +116,7 @@ bool Player::checkAreaCollision(WorldGeneration& worldGeneration) {
 			if (j < 0) continue;
 			Pixel* pix = worldGeneration.getPixelFromGlobal({ i, j });
 			if (pix == nullptr) continue;
-			if (pix->getIsSolid()) return true;
+			if (pix->type->isSolid) return true;
 		}
 	}
 	return false;
@@ -131,7 +131,7 @@ bool Player::checkFeetCollision(WorldGeneration& worldGeneration) {
 
 			Pixel* pix = worldGeneration.getPixelFromGlobal({ i, j });
 			if (pix == nullptr) continue;
-			if (pix->getIsSolid()) return true;
+			if (pix->type->isSolid) return true;
 		}
 	}
 	return false;
@@ -148,7 +148,7 @@ int Player::highestFeetCollisionPoint(WorldGeneration& worldGeneration) {
 			if (j < 0) continue;
 			Pixel* pix = worldGeneration.getPixelFromGlobal({ i, j });
 			if (pix == nullptr) continue;
-			if (pix->getIsSolid()) {
+			if (pix->type->isSolid) {
 				collided = true;
 				if (highestSolidPixelY == 0 || j < highestSolidPixelY) {
 					highestSolidPixelY = j;

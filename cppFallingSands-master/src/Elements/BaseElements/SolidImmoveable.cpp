@@ -1,10 +1,8 @@
 #include "SolidImmoveable.hpp"
-#include "Pixel.hpp"
 
-SolidImmoveable::SolidImmoveable() {
-	setIsMoveable(false);
-	setIsSolid(true);
+SolidImmoveable::SolidImmoveable(const PixelType* type) : Pixel(type) {}
+void SolidImmoveable::update(int row, int col, WorldGeneration& worldGeneration) {
 }
-SolidImmoveable::~SolidImmoveable() {
-
+Pixel* SolidImmoveable::clone() const {
+	return new SolidImmoveable(type);
 }

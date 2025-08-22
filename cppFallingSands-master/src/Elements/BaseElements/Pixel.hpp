@@ -6,75 +6,72 @@
 #include "../../GameSetup/World/WorldGeneration.hpp"
 
 class WorldGeneration;
-// Default Base Class Of Every Pixel
+
+// Flyweight: Stores static, shared properties for each pixel type
+class PixelType {
+public:
+	// Core properties
+	const bool isMoveable;
+	const bool isLiquid;
+	const bool isSolid;
+	const bool isGas;
+	const bool isFlammable;
+	const int mass;
+	const int density;
+	const double chanceToIgnite;
+	const uint32_t color;
+
+	// Constructor to initialize all const properties
+	PixelType(
+		bool moveable, bool liquid, bool solid, bool gas, bool flammable,
+		int mass, int density, double chanceToIgnite, uint32_t color)
+		: isMoveable(moveable), isLiquid(liquid), isSolid(solid), isGas(gas),
+		isFlammable(flammable), mass(mass), density(density),
+		chanceToIgnite(chanceToIgnite), color(color) {
+	}
+};
+
+// Default Base Class of every Pixel
 class Pixel {
-
-	// GETTERS ELEMENTAL FEATURES
 public:
-	bool getIsMoveable();
-	bool getIsLiquid();
-	bool getIsSolid();
-	bool getIsGas();
-	bool getIsFlammable();
+	// This is the only link to the shared data
+	const PixelType* type;
 
-	// SETTERS ELEMENTAL FEATURES
-	void setIsMoveable(bool val);
-	void setIsLiquid(bool val);
-	void setIsSolid(bool val);
-	void setIsGas(bool val);
-	void setIsFlammable(bool val);
-
-	// GETTERS FUNCTIONS
-public:
-	bool getProcessed();
-	int getMass();
-	bool getOnFire();
-	virtual uint32_t getColour();
-	double getChanceToIgnite();
-	int getHp();
-	int getDensity();
-	int getTerminalX();
-	int getTerminalY();
-	// SETTERS FUNCTIONS
-public:
-	void setProcessed(bool val);
-	void setFlammable(bool val);
-	void setOnFire();
-	void setHp(int health);
-	void setMass(int val);
-	void setChanceToIgnite(double val);
-	void setDensity(int val);
-	virtual void setColor(uint32_t val);
-
-public:
-	//Elemental Bools
-	bool isMoveable{ false };
-	bool isFlammable{ false };
-	bool isGas{ false };
-	bool isLiquid{ false };
-	bool isSolid{ false };
+	// Dynamic state properties (unique to each pixel)
 private:
-	// Others
-	int hp{ 5 };
 	bool onFire{ false };
-	uint32_t color{ SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255) };
-	double chanceToIgnite{ 0.9f };
 	bool isProcessed{ false };
-	int mass{ 1 };
-	int density{ 0 };
-	int terminalX{ 2 };
-	int terminalY{ 2 };
+	int hp{ 2 };
 
 public:
-	Pixel();
-	virtual ~Pixel();
+	// Getters for dynamic state
+	bool getOnFire() const { return onFire; }
+	int getHp() const { return hp; }
+	bool getProcessed() const { return isProcessed; }
+
+	// Getters for static properties (redirected to the type object)
+	uint32_t getColour() const;
+	int getMass() const;
+	double getChanceToIgnite() const;
+	int getDensity() const;
+	bool getIsFlammable() const;
+	bool getIsLiquid() const;
+
+	// Setters for dynamic state
+	void setProcessed(bool val) { isProcessed = val; }
+	void setOnFire() { onFire = true; }
+	void setHp(int health) { hp = health; }
+
+public:
+	Pixel(const PixelType* type);
+	virtual ~Pixel() = default;
 	virtual Pixel* clone() const = 0;
-	virtual void update(int row, int col, const int& vecWidth, const int& vecHeight, WorldGeneration& worldGeneration) {};
+	virtual void update(int row, int col, WorldGeneration& worldGeneration) {};
 
 	// FIRE FUNCTIONALITY
-public:
 	virtual void ignite();
 	virtual bool hit();
 	virtual bool fireTick(WorldGeneration& worldGeneration, const int& row, const int& col);
 };
+
 #endif // PIXEL_HPP

@@ -1,17 +1,16 @@
 #ifndef NAPALM_HPP
 #define NAPALM_HPP
+
 #include "BaseElements/Liquid.hpp"
-#include "BaseElements/Pixel.hpp"
 
 class Napalm : public Liquid {
 public:
-	Napalm();
-	virtual ~Napalm();
-	virtual Pixel* clone() const;
-
+	Napalm(const PixelType* type);
+	virtual ~Napalm() = default;
+	virtual void update(int row, int col, WorldGeneration& worldGeneration) override;
+	virtual Pixel* clone() const override;
 
 private:
 	bool movingRight{ false };
 };
-
 #endif /* NAPALM_HPP */

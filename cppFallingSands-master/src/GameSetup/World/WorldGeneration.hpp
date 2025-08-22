@@ -16,8 +16,11 @@ class Pixel;
 class Chunk;
 class WorldGeneration {
 public:
-	WorldGeneration();
-	~WorldGeneration();
+	WorldGeneration(
+		Sand* sand, Water* water, Rock* rock,
+		Smoke* smoke, Napalm* napalm, Oil* oil);
+	WorldGeneration() : emptyChunk() {};
+
 	void cleanUp();
 	void generateBlock(SDL_Renderer* renderer);
 	void pixelsToBlocks(std::vector<float> noise, Vector2D<int> worldQuad, Chunk& chunk);

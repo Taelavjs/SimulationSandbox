@@ -12,37 +12,28 @@
 #include <iomanip> 
 #include <iostream>
 #include <math.h>   
+#include <random>
 
-WorldGeneration::WorldGeneration()
-	: emptyChunk()
-{
-	sand = new Sand();
-	water = new Water();
-	rock = new Rock();
-	smoke = new Smoke();
-	napalm = new Napalm();
-	oil = new Oil();
+WorldGeneration::WorldGeneration(
+	Sand* sand, Water* water, Rock* rock,
+	Smoke* smoke, Napalm* napalm, Oil* oil)
+	: emptyChunk() {
+
+	this->sand = sand;
+	this->water = water;
+	this->rock = rock;
+	this->smoke = smoke;
+	this->napalm = napalm;
+	this->oil = oil;
+
 }
 
-WorldGeneration::~WorldGeneration() {
-	delete sand;
-	delete water;
-	delete rock;
-	delete oil;
-	delete smoke;
-	delete napalm;
-	// Clear the map itself
-	worldVecStore.clear();
-}
 
 void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 	for (int i = 0; i < GlobalVariables::worldChunkWidth; i++) {
 		for (int j = 0; j < GlobalVariables::worldChunkWidth; j++) {
 			Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize] = { nullptr };
 
-			// Constructs Key and value in place within the map
-			// Avoids creating and copying/deleting pointers within chunk
-			// Avoids chunk = opperator
 			worldVecStore.emplace(std::piecewise_construct,
 				std::forward_as_tuple(i, j),
 				std::forward_as_tuple(Vector2D(i, j)));
@@ -66,12 +57,12 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 
 
 void WorldGeneration::cleanUp() {
-	delete sand;
-	delete water;
-	delete rock;
-	delete oil;
-	delete smoke;
-	delete napalm;
+	//delete sand;
+	//delete water;
+	//delete rock;
+	//delete oil;
+	//delete smoke;
+	//delete napalm;
 }
 
 void printVector(const std::vector<float>& vec) {

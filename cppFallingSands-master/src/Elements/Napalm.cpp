@@ -1,19 +1,19 @@
 #include "Napalm.hpp"
+#include <random>
 
-Napalm::Napalm()
-{
-	setDensity(3);
-	setMass(8);
-	movingRight = (randomNumber() > 0.5f);
+Napalm::Napalm(const PixelType* type) : Liquid(type) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0.0, 1.0);
+	movingRight = (dis(gen) > 0.5f);
+
 	setOnFire();
-	setFlammable(true);
-	setHp(60);
-	setColor(SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 50, 25, 200));
 }
 
-Napalm::~Napalm() {}
+Pixel* Napalm::clone() const {
+	return new Napalm(type);
+}
 
-Pixel* Napalm::clone() const
-{
-	return new Napalm();
+void Napalm::update(int row, int col, WorldGeneration& worldGeneration) {
+	Liquid::update(row, col, worldGeneration);
 }

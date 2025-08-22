@@ -1,16 +1,14 @@
-#ifndef Oil_HPP
-#define Oil_HPP
+#ifndef OIL_HPP
+#define OIL_HPP
+
 #include "BaseElements/Liquid.hpp"
 
 class Oil : public Liquid {
 public:
-	Oil();
-	virtual ~Oil();
-	virtual Pixel* clone() const;
+	Oil(const PixelType* type);
+	virtual ~Oil() = default;
 
-public:
-	uint32_t getColour() override;
-
+	virtual void update(int row, int col, WorldGeneration& worldGeneration) override;
+	virtual Pixel* clone() const override;
 };
-
-#endif /* Oil_HPP */
+#endif /* OIL_HPP */

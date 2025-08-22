@@ -1,107 +1,79 @@
 #include "Liquid.hpp"
+#include <random>
+#include "../../Utility/GlobalVariables.hpp"
 #include <algorithm>
 
+// Constructor now takes the PixelType pointer and passes it to the base class.
+Liquid::Liquid(const PixelType* type) : Moveable(type) {}
 
-Liquid::Liquid() {
-	setIsMoveable(true);
-	setIsLiquid(true);
-}
-Liquid::~Liquid() {}
-
-int Liquid::getMovingDirection() {
-	return x_direction;
+// A virtual clone function is required for the factory pattern.
+// It creates a new object of the same type and copies the PixelType pointer.
+Pixel* Liquid::clone() const {
+	return new Liquid(type);
 }
 
-void Liquid::update(int row, int col, const int& vecWidth, const int& vecHeight, WorldGeneration& worldGeneration)
-{
+void Liquid::update(int row, int col, WorldGeneration& worldGeneration) {
 	setProcessed(true);
-
-	if (!getOnFire() && getHp() < maxHp) {
+	const int maxCount = 3;
+	int count = 0;
+	if (!getOnFire() && getHp() < 3) {
 		setHp(getHp() + 1);
 	}
 
-	bool moved = true;
-	int blocksFallen = 0;
-	while (moved && blocksFallen <= yVelocity) {
-		moved = false; // Assume no movement; change if a swap is made
-
+	while (maxCount > count) {
 		Pixel*& pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
-		if (row + 1 < vecHeight * 2 && pixBelow == nullptr) {
-			// Move down if the space below is empty
+		if (row + 1 < GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth && pixBelow == nullptr) {
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
-			row += 1; // Update row after moving
+			row += 1;
 			x_direction = 0;
-			moved = true; // Indicate a move was made
-			blocksFallen++;
+			count++;
 		}
-		else if (row + 1 < vecHeight * 2 && pixBelow != nullptr && pixBelow->getIsLiquid() && pixBelow->getDensity() < getDensity()) {
-			// Move down if the space below has a less dense liquid
+		else if (row + 1 < GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth && pixBelow != nullptr && pixBelow->type->isLiquid && pixBelow->type->density < type->density) {
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
-			row += 1; // Update row after moving
+			row += 1;
 			x_direction = 0;
-			moved = true; // Indicate a move was made
-			blocksFallen++;
+			count++;
 		}
 		else {
-			// If no valid move down is possible, break the loop
 			break;
 		}
+
 	}
+	if (count != 0) return;
 
-	// No lateral movement checks; pixel can only move left or right in a separate update
-	if (blocksFallen > 0) {
-		yVelocity += 1;
-		yVelocity = std::min(yVelocity, 2);
-		return;
-	};
-	yVelocity = 1;
-
-	blocksFallen = 0;
-	moved = true;
-	while (moved && blocksFallen <= xVelocity) {
-		moved = false; // Assume no movement; change if a swap is made
-
+	while (count < maxCount) {
 		Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
 		Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
-		bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()));
-		bool isRightValid = col + 1 < vecHeight * 2 && (rightPix == nullptr || (rightPix->getIsLiquid() && rightPix->getDensity() < getDensity()));
+		bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->type->isLiquid && leftPix->type->density < type->density));
+		bool isRightValid = col + 1 < GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth && (rightPix == nullptr || (rightPix->type->isLiquid && rightPix->type->density < type->density));
 
 		if (isLeftValid && isRightValid) {
 			// Randomly decide to move left or right if both directions are valid
 			x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
-			col += x_direction; // Update column after moving
-			moved = true; // Indicate a move was made
-			blocksFallen++;
+			col += x_direction;
+			count++;
+
 		}
 		else if (isLeftValid) {
-			// Move left if only left is valid
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
-			col -= 1; // Update column after moving
+			col -= 1;
 			x_direction = -1;
-			moved = true; // Indicate a move was made
-			blocksFallen++;
+			count++;
+
 		}
 		else if (isRightValid) {
-			// Move right if only right is valid
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
-			col += 1; // Update column after moving
+			col += 1;
 			x_direction = 1;
-			moved = true; // Indicate a move was made
-			blocksFallen++;
+			count++;
 		}
 		else {
-			// No valid horizontal move found, break the loop
-			break;
+			return;
 		}
 	}
 
-	if (blocksFallen > 0) {
-		xVelocity += 1;
-		xVelocity = std::min(xVelocity, 3);
-		return;
-	};
 
-	xVelocity = 1;
+
 }
