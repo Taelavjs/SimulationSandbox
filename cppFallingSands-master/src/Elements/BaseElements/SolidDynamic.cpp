@@ -9,28 +9,34 @@ SolidDynamic::~SolidDynamic() {}
 
 void SolidDynamic::update(int row, int col, WorldGeneration& worldGeneration) {
 	setProcessed(true);
+	const int maxCount = 3;
+	int count = 0;
 
-	Pixel*& pixelBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
-	if (pixelBelow == nullptr || checkMoveableMat(pixelBelow)) {
-		worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
-		return;
+	while (count < maxCount) {
+		Pixel*& pixelBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
+		if (pixelBelow == nullptr || checkMoveableMat(pixelBelow)) {
+			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
+			row++;
+			count++;
+		}
+		else {
+			break;
+		}
 	}
 
-	static std::mt19937 gen(std::random_device{}());
-	static std::uniform_int_distribution<> dis(0, 1);
-	int direction = (dis(gen) == 0) ? -1 : 1;
-
+	if (count > 0) return;
+	x_direction = -1;
 	for (int i = 0; i < 2; ++i) {
-		Pixel*& diagonalPixel = worldGeneration.getPixelFromGlobal(Vector2D(col + direction, row + 1));
+		Pixel*& diagonalPixel = worldGeneration.getPixelFromGlobal(Vector2D(col + x_direction, row + 1));
 		if (diagonalPixel == nullptr || checkMoveableMat(diagonalPixel)) {
-			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + direction, row + 1));
-			return;
+			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row + 1));
+			x_direction *= -1;
+			col += x_direction;
 		}
-		direction *= -1;
 	}
 }
 
 bool SolidDynamic::checkMoveableMat(Pixel* space) {
-	return space->type->isMoveable && space->type->isSolid == false;
+	return space->type->isMoveable && (space->type->isLiquid || space->type->isGas);
 }
 

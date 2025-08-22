@@ -7,7 +7,6 @@ class Napalm : public Liquid {
 public:
 	Napalm(const PixelType* type);
 	virtual ~Napalm() = default;
-	virtual void update(int row, int col, WorldGeneration& worldGeneration) override;
 	virtual Pixel* clone() const override;
 
 private:

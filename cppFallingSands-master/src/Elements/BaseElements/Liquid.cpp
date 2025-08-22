@@ -28,7 +28,7 @@ void Liquid::update(int row, int col, WorldGeneration& worldGeneration) {
 			x_direction = 0;
 			count++;
 		}
-		else if (row + 1 < GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth && pixBelow != nullptr && pixBelow->type->isLiquid && pixBelow->type->density < type->density) {
+		else if (row + 1 < GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth && (pixBelow->type->isGas || pixBelow != nullptr && pixBelow->type->isLiquid && pixBelow->type->density < type->density)) {
 			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
 			row += 1;
 			x_direction = 0;

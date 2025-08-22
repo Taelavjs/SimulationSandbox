@@ -152,7 +152,7 @@ void Game::updateSequence(const int& row, const int& col)
 		return;
 	if (pixel->getProcessed())
 		return;
-	if (pixel->getIsFlammable())
+	if (pixel->type->isFlammable)
 	{
 		if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->getOnFire()) {
 			worldGeneration.forceUpdatePixelFromGlobal({ col, row });

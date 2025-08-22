@@ -57,12 +57,6 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 
 
 void WorldGeneration::cleanUp() {
-	//delete sand;
-	//delete water;
-	//delete rock;
-	//delete oil;
-	//delete smoke;
-	//delete napalm;
 }
 
 void printVector(const std::vector<float>& vec) {
@@ -78,7 +72,6 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D<int> wor
 {
 	int chunkStartX = worldQuad.x * GlobalVariables::chunkSize;
 	int chunkStartY = worldQuad.y * GlobalVariables::chunkSize;
-	// std::cout << worldQuad.x << worldQuad.y << '\n';
 	int total = 0;
 	std::setprecision(2);
 	for (int row = 0; row < GlobalVariables::chunkSize; ++row)
@@ -90,7 +83,7 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D<int> wor
 			const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) + (globalCol)];
 			if (pixValue > -0.2f)
 			{
-				vec[row][col] = rock->clone();
+				//vec[row][col] = rock->clone();
 				total += 1;
 			}
 		}

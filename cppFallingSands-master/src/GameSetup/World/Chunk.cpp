@@ -65,7 +65,7 @@ void Chunk::render(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 	{
 		for (int col = 0; col < GlobalVariables::chunkSize; ++col)
 		{
-			const uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->getColour() : 0xFF000000;
+			const uint32_t color = (vec[row][col] != nullptr) ? vec[row][col]->type->color : 0xFF000000;
 			pixels[row * GlobalVariables::chunkSize + col] = color;
 
 			if (vec[row][col] == nullptr)

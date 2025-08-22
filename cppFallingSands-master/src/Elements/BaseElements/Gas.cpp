@@ -9,7 +9,7 @@ Gas::Gas(const PixelType* type) : Moveable(type) {}
 
 void Gas::update(int row, int col, WorldGeneration& worldGeneration) {
 	setProcessed(true);
-	const int maxMove = 2;
+	const int maxMove = 4;
 	int moveCount = 0;
 	bool moved = false;
 
@@ -30,7 +30,6 @@ void Gas::update(int row, int col, WorldGeneration& worldGeneration) {
 			moveCount++;
 		}
 		else {
-			// If no valid move down is possible, break the loop
 			break;
 		}
 	}
@@ -40,26 +39,39 @@ void Gas::update(int row, int col, WorldGeneration& worldGeneration) {
 		return;
 	};
 
-	Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
-	Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
-	bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->type->isMoveable && !leftPix->type->isGas && !leftPix->type->isSolid));
-	bool isRightValid = col + 1 < GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize && (rightPix == nullptr || (rightPix->type->isMoveable && !rightPix->type->isGas && !rightPix->type->isSolid));
+	while (moveCount < maxMove) {
+		Pixel*& leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+		Pixel*& rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
-	if (isLeftValid && isRightValid) {
-		x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;
-		worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
-		col += x_direction;
+		bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->type->isMoveable && !leftPix->type->isGas && !leftPix->type->isSolid));
+		bool isRightValid = col + 1 < GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize && (rightPix == nullptr || (rightPix->type->isMoveable && !rightPix->type->isGas && !rightPix->type->isSolid));
+
+		if (isLeftValid && isRightValid && x_direction == 0) {
+			x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;
+			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
+			col += x_direction;
+			moveCount++;
+		}
+		else if (isLeftValid && (x_direction == -1 || x_direction == 0)) {
+			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
+			col -= 1;
+			x_direction = -1;
+			moveCount++;
+		}
+		else if (isRightValid && (x_direction == -1 || x_direction == 0)) {
+			worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
+			col += 1;
+			x_direction = 1;
+			moveCount++;
+		}
+		else {
+			x_direction = 0;
+			return;
+		}
 	}
-	else if (isLeftValid) {
-		worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
-		col -= 1;
-		x_direction = -1;
-	}
-	else if (isRightValid) {
-		worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
-		col += 1;
-		x_direction = 1;
-	}
+
+	x_direction = 0;
+
 
 }

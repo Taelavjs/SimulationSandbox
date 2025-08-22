@@ -5,6 +5,3 @@ Rock::Rock(const PixelType* type) : SolidImmoveable(type) {}
 Pixel* Rock::clone() const {
 	return new Rock(type);
 }
-void Rock::update(int row, int col, WorldGeneration& worldGeneration) {
-
-}

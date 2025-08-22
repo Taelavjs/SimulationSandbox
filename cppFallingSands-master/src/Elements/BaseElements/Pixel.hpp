@@ -49,14 +49,6 @@ public:
 	int getHp() const { return hp; }
 	bool getProcessed() const { return isProcessed; }
 
-	// Getters for static properties (redirected to the type object)
-	uint32_t getColour() const;
-	int getMass() const;
-	double getChanceToIgnite() const;
-	int getDensity() const;
-	bool getIsFlammable() const;
-	bool getIsLiquid() const;
-
 	// Setters for dynamic state
 	void setProcessed(bool val) { isProcessed = val; }
 	void setOnFire() { onFire = true; }

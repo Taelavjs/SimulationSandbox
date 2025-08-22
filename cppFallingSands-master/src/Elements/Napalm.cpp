@@ -13,7 +13,3 @@ Napalm::Napalm(const PixelType* type) : Liquid(type) {
 Pixel* Napalm::clone() const {
 	return new Napalm(type);
 }
-
-void Napalm::update(int row, int col, WorldGeneration& worldGeneration) {
-	Liquid::update(row, col, worldGeneration);
-}

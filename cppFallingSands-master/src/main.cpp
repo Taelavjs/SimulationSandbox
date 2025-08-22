@@ -57,16 +57,16 @@ int main(int argc, char* argv[])
 		accumulated_seconds += system_timer.elapsed_seconds;
 
 
-		if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
-			GlobalVariables::setDeltaTime(accumulated_seconds);
-			std::cout << accumulated_seconds << '\n';
-			accumulated_seconds = -timeBetweenFrames;
+		//if (std::isgreater(accumulated_seconds, timeBetweenFrames)) {
+		GlobalVariables::setDeltaTime(accumulated_seconds);
+		std::cout << accumulated_seconds << '\n';
+		accumulated_seconds = -timeBetweenFrames;
 
-			i++;
-			game.handleEvents();
-			game.update();
-			game.render();
-		}
+		i++;
+		game.handleEvents();
+		game.update();
+		game.render();
+		//}
 	}
 
 

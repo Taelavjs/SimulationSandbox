@@ -9,13 +9,6 @@
 Pixel::Pixel(const PixelType* type) : type(type) {}
 
 // Redirecting getters to the PixelType object
-uint32_t Pixel::getColour() const { return type->color; }
-int Pixel::getMass() const { return type->mass; }
-double Pixel::getChanceToIgnite() const { return type->chanceToIgnite; }
-int Pixel::getDensity() const { return type->density; }
-bool Pixel::getIsFlammable() const { return type->isFlammable; }
-bool Pixel::getIsLiquid() const { return type->isLiquid; }
-
 void Pixel::ignite() {
 	if (getOnFire()) return;
 	std::random_device rd;
@@ -57,10 +50,10 @@ bool Pixel::fireTick(WorldGeneration& worldGeneration, const int& row, const int
 
 		if (ptrToNeighbor != nullptr) {
 			// Access static properties via `type` pointer and dynamic state directly
-			if (ptrToNeighbor->getIsFlammable() && !ptrToNeighbor->getOnFire()) {
+			if (ptrToNeighbor->type->isFlammable && !ptrToNeighbor->getOnFire()) {
 				ptrToNeighbor->ignite();
 			}
-			else if (ptrToNeighbor->getIsLiquid() && !ptrToNeighbor->getIsFlammable()) {
+			else if (ptrToNeighbor->type->isFlammable && !ptrToNeighbor->type->isFlammable) {
 				if (ptrToNeighbor->hit()) {
 					worldGeneration.burntSmoke(neighborRow, neighborCol);
 				}

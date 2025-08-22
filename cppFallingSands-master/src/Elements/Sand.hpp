@@ -7,7 +7,6 @@ class Sand : public SolidDynamic {
 public:
 	Sand(const PixelType* type);
 	virtual ~Sand() = default;
-	virtual void update(int row, int col, WorldGeneration& worldGeneration);
 	virtual Pixel* clone() const override;
 };
 
