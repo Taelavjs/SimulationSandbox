@@ -154,15 +154,13 @@ Vector2D<int> WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int 
 
 Chunk& WorldGeneration::getChunk(Vector2D<float> chunkGlobalCoord) {
 	Vector2D<int> floatToIntVec = Vector2D<int>((int)chunkGlobalCoord.x, (int)chunkGlobalCoord.y);
-	if (worldVecStore.find(floatToIntVec) != worldVecStore.end()) {
-		return worldVecStore[floatToIntVec];
+	if (!(floatToIntVec.x < GlobalVariables::worldChunkWidth && floatToIntVec.x >= 0 && floatToIntVec.y < GlobalVariables::worldChunkWidth && floatToIntVec.y >= 0)) {
+		return emptyChunk;
 	}
-	return emptyChunk;
+	return worldVecStore[floatToIntVec];
 }
 
 
-// Make the class able to give the correct chunk using global coordinates
-// Rather than swapping between global and local, much easier
 void WorldGeneration::forceUpdatePixelFromGlobal(const Vector2D<int>& position) {
 	Vector2D<int> chunkCoord(0, 0);
 	Vector2D<int> localCoord(0, 0);
@@ -173,9 +171,8 @@ void WorldGeneration::forceUpdatePixelFromGlobal(const Vector2D<int>& position) 
 	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 
-	auto chunkIt = worldVecStore.find(chunkCoord);
-	if (chunkIt != worldVecStore.end()) {
-		return chunkIt->second.getDirtyRect().expand(localCoord.x, localCoord.y);
+	if (chunkCoord.x < GlobalVariables::worldChunkWidth && chunkCoord.x >= 0 && chunkCoord.y < GlobalVariables::worldChunkWidth && chunkCoord.y >= 0) {
+		worldVecStore[chunkCoord].getDirtyRect().expand(localCoord.x, localCoord.y);
 	}
 }
 
@@ -190,9 +187,8 @@ Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
 	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
 
-	auto chunkIt = worldVecStore.find(chunkCoord);
-	if (chunkIt != worldVecStore.end()) {
-		return chunkIt->second[localCoord.y][localCoord.x];
+	if (chunkCoord.x < GlobalVariables::worldChunkWidth && chunkCoord.x >= 0 && chunkCoord.y < GlobalVariables::worldChunkWidth && chunkCoord.y >= 0) {
+		return worldVecStore[chunkCoord][localCoord.y][localCoord.x];
 	}
 	static Pixel* nullpixel = nullptr;
 	return nullpixel;
@@ -231,12 +227,14 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	auto [chunkCoord1, localCoord1] = getCoords(pos1);
 	auto [chunkCoord2, localCoord2] = getCoords(pos2);
 
-	auto it1 = worldVecStore.find(chunkCoord1);
-	auto it2 = worldVecStore.find(chunkCoord2);
-	if (it1 == worldVecStore.end() || it2 == worldVecStore.end()) return;
-
-	Chunk& ch1 = it1->second;
-	Chunk& ch2 = it2->second;
+	if (!(chunkCoord1.x < GlobalVariables::worldChunkWidth && chunkCoord1.x >= 0 && chunkCoord1.y < GlobalVariables::worldChunkWidth && chunkCoord1.y >= 0)) {
+		return;
+	}
+	if (!(chunkCoord2.x < GlobalVariables::worldChunkWidth && chunkCoord2.x >= 0 && chunkCoord2.y < GlobalVariables::worldChunkWidth && chunkCoord2.y >= 0)) {
+		return;
+	}
+	Chunk& ch1 = worldVecStore[chunkCoord1];
+	Chunk& ch2 = worldVecStore[chunkCoord2];
 
 	ch1.getDirtyRect().expand(localCoord1.x, localCoord1.y);
 	ch2.getDirtyRect().expand(localCoord2.x, localCoord2.y);
@@ -267,11 +265,11 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 
 	auto updateNeighbors = [&](const Vector2D<int>& globalPos, const std::vector<Vector2D<int>>& dirs) {
 		for (const auto& dir : dirs) {
-			auto [neighborChunkCoord, neighborLocalCoord] = getCoords(globalPos + dir);
-			auto it = worldVecStore.find(neighborChunkCoord);
-			if (it != worldVecStore.end()) {
-				it->second.getDirtyRect().expand(neighborLocalCoord.x, neighborLocalCoord.y);
+			if (!(globalPos.x < GlobalVariables::worldChunkWidth && globalPos.x >= 0 && globalPos.y < GlobalVariables::worldChunkWidth && globalPos.y >= 0)) {
+				return;
 			}
+			auto [neighborChunkCoord, neighborLocalCoord] = getCoords(globalPos + dir);
+			worldVecStore[neighborChunkCoord].getDirtyRect().expand(neighborLocalCoord.x, neighborLocalCoord.y);
 		}
 		};
 
