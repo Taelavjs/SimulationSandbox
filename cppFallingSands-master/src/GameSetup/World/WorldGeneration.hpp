@@ -35,8 +35,11 @@ public:
 	void clearPixelProcessed();
 	void swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2);
 	void burntSmoke(const int row, const int col);
+	void updateNeighbors(const Vector2D<int>& globalPos, const std::vector<Vector2D<int>>& dirs);
+	std::pair<Vector2D<int>, Vector2D<int>> getCoords(const Vector2D<int>& globalPos);
+
 private:
-	std::unordered_map<Vector2D<int>, Chunk> worldVecStore;
+	std::unordered_map<Vector2D<int>, Chunk*> worldVecStore;
 	Sand* sand;
 	Water* water;
 	Rock* rock;

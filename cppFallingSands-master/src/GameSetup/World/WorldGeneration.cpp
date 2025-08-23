@@ -44,7 +44,7 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 	std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
-		Chunk& currentChunk = mapEntry.second;
+		Chunk*& currentChunk = mapEntry.second;
 		pixelsToBlocks(noiseMap, mapEntry.first, currentChunk);
 		generateCorridors(terrainMap, mapEntry.first, currentChunk);
 
@@ -132,6 +132,9 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D<int> 
 			else if (rng < 0.8 / 3) {
 				vec[row][col] = napalm->clone();
 			}
+			else {
+				vec[row][col] = sand->clone();
+			}
 		}
 	}
 }
@@ -181,23 +184,27 @@ void WorldGeneration::forceUpdatePixelFromGlobal(const Vector2D<int>& position) 
 
 
 Pixel*& WorldGeneration::getPixelFromGlobal(const Vector2D<int>& position) {
-	Vector2D<int> chunkCoord(0, 0);
-	Vector2D<int> localCoord(0, 0);
+	const int chunkSize = GlobalVariables::chunkSize;
 
-	chunkCoord.x = position.x / GlobalVariables::chunkSize;
-	chunkCoord.y = position.y / GlobalVariables::chunkSize;
+	Vector2D<int> chunkCoord = {
+		position.x / chunkSize,
+		position.y / chunkSize
+	};
 
-	localCoord.x = (position.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
-	localCoord.y = (position.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize;
+	Vector2D<int> localCoord = {
+		(position.x % chunkSize + chunkSize) % chunkSize,
+		(position.y % chunkSize + chunkSize) % chunkSize
+	};
 
 	auto chunkIt = worldVecStore.find(chunkCoord);
 	if (chunkIt != worldVecStore.end()) {
 		return chunkIt->second[localCoord.y][localCoord.x];
 	}
-	static Pixel* nullpixel = nullptr;
-	return nullpixel;
-}
 
+	// Static null pointer or dummy pixel depending on needs
+	static Pixel* nullpixel = nullptr;
+	return nullpixel;  // Safe: returning a reference to a pointer
+}
 void WorldGeneration::clearPixelProcessed() {
 	for (auto& mapEntry : worldVecStore) {
 		Chunk& vec2D = mapEntry.second;
@@ -214,19 +221,30 @@ void WorldGeneration::clearPixelProcessed() {
 		}
 	}
 }
+void WorldGeneration::updateNeighbors(const Vector2D<int>& globalPos, const std::vector<Vector2D<int>>& dirs) {
+	for (const auto& dir : dirs) {
+		auto [neighborChunkCoord, neighborLocalCoord] = getCoords(globalPos + dir);
+		auto it = worldVecStore.find(neighborChunkCoord);
+		if (it != worldVecStore.end()) {
+			it->second.getDirtyRect().expand(neighborLocalCoord.x, neighborLocalCoord.y);
+		}
+	}
+};
+
+std::pair<Vector2D<int>, Vector2D<int>> WorldGeneration::getCoords(const Vector2D<int>& globalPos) {
+	Vector2D<int> chunkCoord(
+		std::floor(globalPos.x) / GlobalVariables::chunkSize,
+		std::floor(globalPos.y) / GlobalVariables::chunkSize
+	);
+	Vector2D<int> localCoord(
+		(globalPos.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize,
+		(globalPos.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize
+	);
+	return std::make_pair(chunkCoord, localCoord);
+};
 
 void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
-	auto getCoords = [&](const Vector2D<int>& globalPos) {
-		Vector2D<int> chunkCoord(
-			std::floor(globalPos.x) / GlobalVariables::chunkSize,
-			std::floor(globalPos.y) / GlobalVariables::chunkSize
-		);
-		Vector2D<int> localCoord(
-			(globalPos.x % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize,
-			(globalPos.y % GlobalVariables::chunkSize + GlobalVariables::chunkSize) % GlobalVariables::chunkSize
-		);
-		return std::make_pair(chunkCoord, localCoord);
-		};
+
 
 	auto [chunkCoord1, localCoord1] = getCoords(pos1);
 	auto [chunkCoord2, localCoord2] = getCoords(pos2);
@@ -254,29 +272,15 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	if (!(localCoord1.x == 0 || localCoord1.x == GlobalVariables::chunkSize - 1 ||
 		localCoord1.y == 0 || localCoord1.y == GlobalVariables::chunkSize - 1)) return;
 	std::vector<Vector2D<int>> relevantDirections;
-
 	if (localCoord1.x == 0)
 		relevantDirections.emplace_back(Vector2D<int>{ -1, 0 });
 	else if (localCoord1.x == GlobalVariables::chunkSize - 1)
 		relevantDirections.emplace_back(Vector2D<int>{ 1, 0 });
-
 	if (localCoord1.y == 0)
 		relevantDirections.emplace_back(Vector2D<int>{ 0, -1 });
 	else if (localCoord1.y == GlobalVariables::chunkSize - 1)
 		relevantDirections.emplace_back(Vector2D<int>{ 0, 1 });
-
-	auto updateNeighbors = [&](const Vector2D<int>& globalPos, const std::vector<Vector2D<int>>& dirs) {
-		for (const auto& dir : dirs) {
-			auto [neighborChunkCoord, neighborLocalCoord] = getCoords(globalPos + dir);
-			auto it = worldVecStore.find(neighborChunkCoord);
-			if (it != worldVecStore.end()) {
-				it->second.getDirtyRect().expand(neighborLocalCoord.x, neighborLocalCoord.y);
-			}
-		}
-		};
-
 	updateNeighbors(pos1, relevantDirections);
-
 }
 
 void WorldGeneration::burntSmoke(const int row, const int col) {
