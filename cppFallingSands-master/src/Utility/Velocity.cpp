@@ -27,7 +27,7 @@ void Velocity::setIsGrounded(bool value) {
 
 void Velocity::velocityTick() {
 	if (!isGrounded) {
-		velocity.y -= gravity * mass;
+		velocity.y -= gravity * mass * GlobalVariables::getDeltaTime();
 		velocity.x *= 9.5f * GlobalVariables::getDeltaTime();
 	}
 	else {

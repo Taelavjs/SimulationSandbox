@@ -254,18 +254,31 @@ void WorldGeneration::swapTwoValues(Vector2D<int> pos1, Vector2D<int> pos2) {
 	}
 
 	std::swap(ch1[localCoord1.y][localCoord1.x], ch2[localCoord2.y][localCoord2.x]);
-	if (!(localCoord1.x == 0 || localCoord1.x == GlobalVariables::chunkSize - 1 ||
-		localCoord1.y == 0 || localCoord1.y == GlobalVariables::chunkSize - 1)) return;
+	if ((localCoord1.x == 0 || localCoord1.x == GlobalVariables::chunkSize - 1 ||
+		localCoord1.y == 0 || localCoord1.y == GlobalVariables::chunkSize - 1)) {
+		if (localCoord1.x == 0)
+			updateNeighbors(pos1, { -1, 0 });
+		else if (localCoord1.x == GlobalVariables::chunkSize - 1)
+			updateNeighbors(pos1, { 1, 0 });
 
-	if (localCoord1.x == 0)
-		updateNeighbors(pos1, { -1, 0 });
-	else if (localCoord1.x == GlobalVariables::chunkSize - 1)
-		updateNeighbors(pos1, { 1, 0 });
+		if (localCoord1.y == 0)
+			updateNeighbors(pos1, { 0, -1 });
+		else if (localCoord1.y == GlobalVariables::chunkSize - 1)
+			updateNeighbors(pos1, { 0, 1 });
+	}
 
-	if (localCoord1.y == 0)
-		updateNeighbors(pos1, { 0, -1 });
-	else if (localCoord1.y == GlobalVariables::chunkSize - 1)
-		updateNeighbors(pos1, { 0, 1 });
+	if (!(localCoord2.x == 0 || localCoord2.x == GlobalVariables::chunkSize - 1 ||
+		localCoord2.y == 0 || localCoord2.y == GlobalVariables::chunkSize - 1)) return;
+
+	if (localCoord2.x == 0)
+		updateNeighbors(pos2, { -1, 0 });
+	else if (localCoord2.x == GlobalVariables::chunkSize - 1)
+		updateNeighbors(pos2, { 1, 0 });
+
+	if (localCoord2.y == 0)
+		updateNeighbors(pos2, { 0, -1 });
+	else if (localCoord2.y == GlobalVariables::chunkSize - 1)
+		updateNeighbors(pos2, { 0, 1 });
 }
 
 void WorldGeneration::burntSmoke(const int row, const int col) {
