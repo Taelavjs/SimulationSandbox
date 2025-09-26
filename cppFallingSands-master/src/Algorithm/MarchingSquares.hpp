@@ -11,11 +11,11 @@ struct MarchingSquares {
 	static std::stack<std::pair<Vector2D<float>, Vector2D<float>>> run(
 		Chunk& chunk) {
 
-		std::array<std::array<int, GlobalVariables::chunkSize>, GlobalVariables::chunkSize> results{};
+		std::array<std::array<int, GlobalVariables::chunkSize + 1>, GlobalVariables::chunkSize + 1> results{};
 		int chunkSize = GlobalVariables::chunkSize;
 
-		for (int i = 0; i < chunkSize; i++) {
-			for (int j = 0; j < chunkSize; j++) {
+		for (int i = -1; i < chunkSize; i++) {
+			for (int j = -1; j < chunkSize; j++) {
 
 				auto getPixel = [&](int row, int col) -> Pixel* {
 					if (row < 0 || row >= chunkSize || col < 0 || col >= chunkSize) {
@@ -38,17 +38,19 @@ struct MarchingSquares {
 
 				if (bottomRight != nullptr && !bottomRight->type->isMoveable) squareIndex += 8;
 
-				results[i][j] = squareIndex;
+				results[i + 1][j + 1] = squareIndex;
 			}
 		}
 
 		std::stack<std::pair<Vector2D<float>, Vector2D<float>>> lines;
 		const float halfInc = 0.5f;
 
-		for (int i = 0; i < GlobalVariables::chunkSize; i++) {
-			for (int j = 0; j < GlobalVariables::chunkSize; j++) {
-				const float x = static_cast<float>(j);
-				const float y = static_cast<float>(i);
+		for (int i = 0; i < GlobalVariables::chunkSize + 1; i++) {
+			for (int j = 0; j < GlobalVariables::chunkSize + 1; j++) {
+				float x = static_cast<float>(j);
+				float y = static_cast<float>(i);
+				x -= 1.0f;
+				y -= 1.0f;
 
 				const Vector2D<float> top(x + halfInc, y);
 				const Vector2D<float> bottom(x + halfInc, y + 1.0f);

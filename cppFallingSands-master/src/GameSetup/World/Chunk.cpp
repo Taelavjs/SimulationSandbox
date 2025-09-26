@@ -128,8 +128,8 @@ void Chunk::resetPixels(const uint32_t& blackColor) {
 void Chunk::SDLRenderFunctions(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
+	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 	SDL_RenderCopy(renderer, linesTexture, NULL, &dstRect);
-	SDL_RenderPresent(renderer);
 
 }
 
