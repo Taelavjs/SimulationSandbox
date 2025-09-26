@@ -11,21 +11,33 @@ struct MarchingSquares {
 	static std::stack<std::pair<Vector2D<float>, Vector2D<float>>> run(
 		Chunk& chunk) {
 
-		std::array<std::array<int, GlobalVariables::chunkSize - 1>, GlobalVariables::chunkSize - 1> results{};
+		std::array<std::array<int, GlobalVariables::chunkSize>, GlobalVariables::chunkSize> results{};
+		int chunkSize = GlobalVariables::chunkSize;
 
-		for (int i = 0; i < GlobalVariables::chunkSize - 1; i++) {
-			for (int j = 0; j < GlobalVariables::chunkSize - 1; j++) {
-				Pixel* topLeft = chunk[i][j];
-				Pixel* topRight = chunk[i][j + 1];
-				Pixel* bottomLeft = chunk[i + 1][j];
-				Pixel* bottomRight = chunk[i + 1][j + 1];
+		for (int i = 0; i < chunkSize; i++) {
+			for (int j = 0; j < chunkSize; j++) {
 
+				auto getPixel = [&](int row, int col) -> Pixel* {
+					if (row < 0 || row >= chunkSize || col < 0 || col >= chunkSize) {
+						return nullptr; // Treat outside as empty space
+					}
+					return chunk[row][col];
+					};
+				Pixel* topLeft = getPixel(i, j);
+				Pixel* topRight = getPixel(i, j + 1);
+				Pixel* bottomLeft = getPixel(i + 1, j);
+				Pixel* bottomRight = getPixel(i + 1, j + 1);
 
 				int squareIndex = 0;
-				if (topLeft != nullptr && !topLeft->type->isMoveable)       squareIndex += 1;
-				if (topRight != nullptr && !topRight->type->isMoveable)     squareIndex += 2;
-				if (bottomLeft != nullptr && !bottomLeft->type->isMoveable)   squareIndex += 4;
-				if (bottomRight != nullptr && !bottomRight->type->isMoveable)  squareIndex += 8;
+
+				if (topLeft != nullptr && !topLeft->type->isMoveable)     squareIndex += 1;
+
+				if (topRight != nullptr && !topRight->type->isMoveable)   squareIndex += 2;
+
+				if (bottomLeft != nullptr && !bottomLeft->type->isMoveable) squareIndex += 4;
+
+				if (bottomRight != nullptr && !bottomRight->type->isMoveable) squareIndex += 8;
+
 				results[i][j] = squareIndex;
 			}
 		}
@@ -33,8 +45,8 @@ struct MarchingSquares {
 		std::stack<std::pair<Vector2D<float>, Vector2D<float>>> lines;
 		const float halfInc = 0.5f;
 
-		for (int i = 0; i < GlobalVariables::chunkSize - 1; i++) {
-			for (int j = 0; j < GlobalVariables::chunkSize - 1; j++) {
+		for (int i = 0; i < GlobalVariables::chunkSize; i++) {
+			for (int j = 0; j < GlobalVariables::chunkSize; j++) {
 				const float x = static_cast<float>(j);
 				const float y = static_cast<float>(i);
 

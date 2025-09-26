@@ -11,6 +11,8 @@
 class Pixel;
 class WorldGeneration;
 class Chunk {
+	using Polyline = std::vector<Vector2D<float>>;
+
 public:
 	Chunk();
 	Chunk(Vector2D<int> chunkGlobalCoords);
@@ -35,6 +37,8 @@ public:
 	void createLineTexture(SDL_Renderer* renderer);
 	void RenderDirtyRectToTexture(const SDL_Rect& playerRect);
 	void UpdateChunkRenderLocation(const SDL_Rect& playerRect);
+	void drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, SDL_Renderer* renderer);
+
 private:
 	Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize];
 	Vector2D<int> globalCoords;

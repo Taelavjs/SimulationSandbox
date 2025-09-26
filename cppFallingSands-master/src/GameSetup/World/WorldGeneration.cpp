@@ -8,6 +8,7 @@
 #include "../../Elements/Water.hpp"
 #include "../../Utility/GlobalVariables.hpp"
 #include "../../Algorithm/MarchingSquares.hpp"
+#include "../../Algorithm/Douglas.hpp"
 #include <map>
 #include <iomanip> 
 #include <iostream>
@@ -44,15 +45,33 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 	std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth, GlobalVariables::worldChunkWidth * GlobalVariables::chunkSize);
 
 	for (auto& mapEntry : worldVecStore) {
+		std::vector<std::vector<Vector2D<float>>> simplifiedPolyLines;
 		Chunk& currentChunk = mapEntry.second;
 		pixelsToBlocks(noiseMap, mapEntry.first, currentChunk);
 		generateCorridors(terrainMap, mapEntry.first, currentChunk);
 
 		const Vector2D<int> currentCoords = mapEntry.first;
-		currentChunk.createLinesTexture(MarchingSquares::run(currentChunk), renderer);
+		std::stack<std::pair<Vector2D<float>, Vector2D<float>>> marchingSquaresResults = MarchingSquares::run(currentChunk);
+		//currentChunk.createLinesTexture(marchingSquaresResults, renderer);
+
+		std::vector<std::pair<Vector2D<float>, Vector2D<float>>> segments;
+		while (!marchingSquaresResults.empty()) {
+			segments.push_back(marchingSquaresResults.top());
+			marchingSquaresResults.pop();
+		}
+		std::unordered_map<Vector2D<float>, std::vector<Vector2D<float>>> adjacency;
+
+		for (auto& [p1, p2] : segments) {
+			adjacency[p1].push_back(p2);
+			adjacency[p2].push_back(p1);
+		}
+
+		auto res = Douglas::SegmentingLines(adjacency);
+		for (const auto& pLine : res) {
+			simplifiedPolyLines.push_back(Douglas::DouglasPeucker(pLine, 0.1f));
+		}
+		currentChunk.drawSimplifiedPolygonsTexture(simplifiedPolyLines, renderer);
 	}
-
-
 }
 
 
@@ -83,7 +102,7 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D<int> wor
 			const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) + (globalCol)];
 			if (pixValue > -0.2f)
 			{
-				//vec[row][col] = rock->clone();
+				vec[row][col] = rock->clone();
 				total += 1;
 			}
 		}

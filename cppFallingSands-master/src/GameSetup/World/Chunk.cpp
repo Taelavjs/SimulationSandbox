@@ -2,6 +2,8 @@
 #include "WorldGeneration.hpp"
 #include "../../Elements/BaseElements/Pixel.hpp"
 #include "../../Utility/GlobalVariables.hpp"
+#include <random>
+#include <chrono>
 
 // Instantion and deletion
 
@@ -126,9 +128,8 @@ void Chunk::resetPixels(const uint32_t& blackColor) {
 void Chunk::SDLRenderFunctions(SDL_Renderer* renderer, const SDL_Rect& playerRect) {
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
-	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 	SDL_RenderCopy(renderer, linesTexture, NULL, &dstRect);
-
+	SDL_RenderPresent(renderer);
 
 }
 
@@ -158,7 +159,82 @@ void Chunk::createLinesTexture(std::stack<std::pair<Vector2D<float>, Vector2D<fl
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
 }
+Uint8 getRandomColorComponent(std::mt19937& gen) {
+	std::uniform_int_distribution<> distrib(0, 255);
+	return (Uint8)distrib(gen);
+}
+using Polyline = std::vector<Vector2D<float>>;
+// Helper function to generate a random 8-bit integer (0-255)
+// (Assuming this function is defined elsewhere)
+// Uint8 getRandomColorComponent(std::mt19937& gen); 
 
+void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, SDL_Renderer* renderer) {
+	// Check if the linesTexture is initialized
+	if (linesTexture == nullptr) {
+		CreateBaseTextures(renderer);
+		SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
+	}
+
+	// Initialize the random number generator once
+	unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
+	std::mt19937 gen(seed);
+
+	// Save current target and draw color
+	SDL_Texture* originalTarget = SDL_GetRenderTarget(renderer);
+	Uint8 r{}, g{}, b{}, a{};
+	SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+
+	// Set the texture as the rendering target
+	SDL_SetRenderTarget(renderer, linesTexture);
+
+	// ----------------------------------------------------------------------
+	// CRITICAL STEP 2: Clear the texture with a fully transparent color (Alpha = 0)
+	// ----------------------------------------------------------------------
+
+	// --- Drawing Loop ---
+	for (const auto& polyline : simplified_polygons) {
+		if (polyline.size() < 2) continue;
+
+		// 1. Assign a Random Color for this Polyline (keeping alpha fully opaque for the line itself)
+		Uint8 rand_r = getRandomColorComponent(gen);
+		Uint8 rand_g = getRandomColorComponent(gen);
+		Uint8 rand_b = getRandomColorComponent(gen);
+
+		SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 255); // Alpha is 255 (opaque)
+
+		// 2. Iterate through vertices and draw connected segments
+		for (size_t i = 0; i < polyline.size(); ++i) {
+			const Vector2D<float>& p1 = polyline[i];
+
+			// Connects last point to first if the polyline is closed
+			size_t next_index = (i + 1) % polyline.size();
+			const Vector2D<float>& p2 = polyline[next_index];
+
+			SDL_RenderDrawLineF(renderer,
+				p1.x, p1.y,
+				p2.x, p2.y
+			);
+
+			// Optimization: If the polyline is guaranteed to be a closed loop, 
+			// the loop naturally handles all segments by connecting the last point to the first.
+			// We just need to ensure we don't draw the *next* segment if we've already drawn the closing one.
+			if (next_index == 0 && i == polyline.size() - 1) {
+				// This condition correctly handles a closed loop, ensuring the last segment is drawn
+				// before stopping, and prevents the loop body from running again after the last vertex.
+				// The main 'for' loop condition will actually handle the termination correctly 
+				// but this 'break' is harmless if the intent was to prevent over-drawing.
+				// A simpler loop condition is often i < polyline.size() - 1 for open lines, 
+				// and a manual final line for closed. Your original logic works for closed, though!
+				break;
+			}
+		}
+	}
+	// End Drawing Loop
+
+	// Restore original render target and draw color
+	SDL_SetRenderTarget(renderer, originalTarget);
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
 // GETTERS
 int Chunk::size() {
 	return GlobalVariables::chunkSize;
@@ -168,5 +244,3 @@ chunkBoundingBox& Chunk::getDirtyRect() { return dirtyRec; };
 SDL_Texture* Chunk::getTexture() { return texture; };
 uint32_t* Chunk::getPixels() { return pixels; };
 
-void Chunk::createLineTexture(SDL_Renderer* renderer) {
-}

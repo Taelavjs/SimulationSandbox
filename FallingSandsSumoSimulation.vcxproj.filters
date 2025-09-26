@@ -126,6 +126,9 @@
     <ClInclude Include="cppFallingSands-master\src\Algorithm\MarchingSquares.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cppFallingSands-master\src\Algorithm\Douglas.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDL2 Template.rc">
@@ -235,7 +238,7 @@
     <ClCompile Include="cppFallingSands-master\src\Algorithm\MarchingSquares.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cppFallingSands-master\src\Algorithm\DouglasPeucker.cpp">
+    <ClCompile Include="cppFallingSands-master\src\Algorithm\Douglas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
