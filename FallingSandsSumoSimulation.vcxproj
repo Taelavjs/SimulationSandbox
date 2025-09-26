@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\taela\Documents\box2d-3.0.0\box2d-3.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\taela\Documents\box2d-3.0.0\box2d-3.0.0\build\src\Release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -111,7 +115,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\SDL2-2.26.3\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,6 +182,7 @@
     <Image Include="cppFallingSands-master\Sprites\AnimationSheet_Character.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cppFallingSands-master\src\Algorithm\DouglasPeucker.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Algorithm\MarchingSquares.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Gas.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Elements\BaseElements\Liquid.cpp" />
