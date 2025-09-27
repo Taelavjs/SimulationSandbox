@@ -167,6 +167,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SubChunkBoundingBox.hpp" />
     <ClInclude Include="ThreadPool.hpp" />
+    <ClInclude Include="triangulate.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDL2 Template.rc" />
@@ -213,6 +214,7 @@
     <ClCompile Include="cppFallingSands-master\src\Utility\Velocity.cpp" />
     <ClCompile Include="cppFallingSands-master\src\Algorithm\Douglas.cpp" />
     <ClCompile Include="SubChunkBoundingBox.cpp" />
+    <ClCompile Include="triangulate.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

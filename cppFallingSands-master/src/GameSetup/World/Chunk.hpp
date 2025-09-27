@@ -8,12 +8,9 @@
 #include "../../../../cppFallingSands-master/src/Utility/GlobalVariables.hpp"
 #include <SDL.h>
 #include <stack>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/draw_constrained_triangulation_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_2<K> Regular_triangulation;
+#include "../../../../triangulate.h"
+
 class Pixel;
 class WorldGeneration;
 class Chunk {
@@ -43,7 +40,7 @@ public:
 	void createLineTexture(SDL_Renderer* renderer);
 	void RenderDirtyRectToTexture(const SDL_Rect& playerRect);
 	void UpdateChunkRenderLocation(const SDL_Rect& playerRect);
-	void drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, std::vector<std::tuple<K::Point_2, K::Point_2, K::Point_2>> tris, SDL_Renderer* renderer);
+	void drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, Vector2dVector tris, SDL_Renderer* renderer);
 
 private:
 	Pixel* vec[GlobalVariables::chunkSize][GlobalVariables::chunkSize];

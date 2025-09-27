@@ -4,12 +4,7 @@
 #include "../../Utility/GlobalVariables.hpp"
 #include <random>
 #include <chrono>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/draw_constrained_triangulation_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_2<K> Regular_triangulation;
 // Instantion and deletion
 
 Chunk::Chunk(Vector2D<int> chunkGlobalCoords)
@@ -169,7 +164,7 @@ Uint8 getRandomColorComponent(std::mt19937& gen) {
 	return (Uint8)distrib(gen);
 }
 using Polyline = std::vector<Vector2D<float>>;
-void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, std::vector<std::tuple<K::Point_2, K::Point_2, K::Point_2>> tris, SDL_Renderer* renderer) {
+void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, Vector2dVector tris, SDL_Renderer* renderer) {
 	if (linesTexture == nullptr) {
 		CreateBaseTextures(renderer);
 		SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
@@ -205,24 +200,25 @@ void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplifie
 			}
 		}
 	}
-	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+	Uint8 rand_r = getRandomColorComponent(gen);
+	Uint8 rand_g = getRandomColorComponent(gen);
+	Uint8 rand_b = getRandomColorComponent(gen);
+	for (size_t i = 0; i < tris.size(); i += 3) {
+		if (i + 2 >= tris.size()) break;
 
-	for (const auto& tri : tris) {
-		const K::Point_2& p1_local = std::get<0>(tri);
-		const K::Point_2& p2_local = std::get<1>(tri);
-		const K::Point_2& p3_local = std::get<2>(tri);
+		const Vector2d& pA = tris[i];
+		const Vector2d& pB = tris[i + 1];
+		const Vector2d& pC = tris[i + 2];
+		SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 128);
 
-		float x1 = (p1_local.x());
-		float y1 = (p1_local.y());
-		float x2 = (p2_local.x());
-		float y2 = (p2_local.y());
-		float x3 = (p3_local.x());
-		float y3 = (p3_local.y());
-
-		SDL_RenderDrawLineF(renderer, x1, y1, x2, y2);
-		SDL_RenderDrawLineF(renderer, x2, y2, x3, y3);
-		SDL_RenderDrawLineF(renderer, x3, y3, x1, y1);
+		SDL_RenderDrawLineF(renderer, pA.GetX(), pA.GetY(), pB.GetX(), pB.GetY());
+		SDL_RenderDrawLineF(renderer, pB.GetX(), pB.GetY(), pC.GetX(), pC.GetY());
+		SDL_RenderDrawLineF(renderer, pC.GetX(), pC.GetY(), pA.GetX(), pA.GetY());
 	}
+
+	// --- END MODIFICATION ---
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 
 	SDL_SetRenderTarget(renderer, originalTarget);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
