@@ -4,7 +4,12 @@
 #include "../../Utility/GlobalVariables.hpp"
 #include <random>
 #include <chrono>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Regular_triangulation_2<K> Regular_triangulation;
 // Instantion and deletion
 
 Chunk::Chunk(Vector2D<int> chunkGlobalCoords)
@@ -164,49 +169,29 @@ Uint8 getRandomColorComponent(std::mt19937& gen) {
 	return (Uint8)distrib(gen);
 }
 using Polyline = std::vector<Vector2D<float>>;
-// Helper function to generate a random 8-bit integer (0-255)
-// (Assuming this function is defined elsewhere)
-// Uint8 getRandomColorComponent(std::mt19937& gen); 
-
-void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, SDL_Renderer* renderer) {
-	// Check if the linesTexture is initialized
+void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplified_polygons, std::vector<std::tuple<K::Point_2, K::Point_2, K::Point_2>> tris, SDL_Renderer* renderer) {
 	if (linesTexture == nullptr) {
 		CreateBaseTextures(renderer);
 		SDL_SetTextureBlendMode(linesTexture, SDL_BLENDMODE_BLEND);
 	}
 
-	// Initialize the random number generator once
 	unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
 	std::mt19937 gen(seed);
-
-	// Save current target and draw color
 	SDL_Texture* originalTarget = SDL_GetRenderTarget(renderer);
 	Uint8 r{}, g{}, b{}, a{};
 	SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
 
-	// Set the texture as the rendering target
 	SDL_SetRenderTarget(renderer, linesTexture);
-
-	// ----------------------------------------------------------------------
-	// CRITICAL STEP 2: Clear the texture with a fully transparent color (Alpha = 0)
-	// ----------------------------------------------------------------------
-
-	// --- Drawing Loop ---
 	for (const auto& polyline : simplified_polygons) {
 		if (polyline.size() < 2) continue;
-
-		// 1. Assign a Random Color for this Polyline (keeping alpha fully opaque for the line itself)
 		Uint8 rand_r = getRandomColorComponent(gen);
 		Uint8 rand_g = getRandomColorComponent(gen);
 		Uint8 rand_b = getRandomColorComponent(gen);
 
-		SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 255); // Alpha is 255 (opaque)
-
-		// 2. Iterate through vertices and draw connected segments
+		SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 255);
 		for (size_t i = 0; i < polyline.size(); ++i) {
 			const Vector2D<float>& p1 = polyline[i];
 
-			// Connects last point to first if the polyline is closed
 			size_t next_index = (i + 1) % polyline.size();
 			const Vector2D<float>& p2 = polyline[next_index];
 
@@ -215,27 +200,33 @@ void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplifie
 				p2.x, p2.y
 			);
 
-			// Optimization: If the polyline is guaranteed to be a closed loop, 
-			// the loop naturally handles all segments by connecting the last point to the first.
-			// We just need to ensure we don't draw the *next* segment if we've already drawn the closing one.
-			if (next_index == 0 && i == polyline.size() - 1) {
-				// This condition correctly handles a closed loop, ensuring the last segment is drawn
-				// before stopping, and prevents the loop body from running again after the last vertex.
-				// The main 'for' loop condition will actually handle the termination correctly 
-				// but this 'break' is harmless if the intent was to prevent over-drawing.
-				// A simpler loop condition is often i < polyline.size() - 1 for open lines, 
-				// and a manual final line for closed. Your original logic works for closed, though!
+			if (next_index == 0) {
 				break;
 			}
 		}
 	}
-	// End Drawing Loop
+	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 
-	// Restore original render target and draw color
+	for (const auto& tri : tris) {
+		const K::Point_2& p1_local = std::get<0>(tri);
+		const K::Point_2& p2_local = std::get<1>(tri);
+		const K::Point_2& p3_local = std::get<2>(tri);
+
+		float x1 = (p1_local.x());
+		float y1 = (p1_local.y());
+		float x2 = (p2_local.x());
+		float y2 = (p2_local.y());
+		float x3 = (p3_local.x());
+		float y3 = (p3_local.y());
+
+		SDL_RenderDrawLineF(renderer, x1, y1, x2, y2);
+		SDL_RenderDrawLineF(renderer, x2, y2, x3, y3);
+		SDL_RenderDrawLineF(renderer, x3, y3, x1, y1);
+	}
+
 	SDL_SetRenderTarget(renderer, originalTarget);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
 }
-// GETTERS
 int Chunk::size() {
 	return GlobalVariables::chunkSize;
 }

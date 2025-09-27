@@ -14,7 +14,12 @@
 #include <iostream>
 #include <math.h>   
 #include <random>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
+typedef CDT::Point Point;
 WorldGeneration::WorldGeneration(
 	Sand* sand, Water* water, Rock* rock,
 	Smoke* smoke, Napalm* napalm, Oil* oil)
@@ -52,25 +57,53 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 
 		const Vector2D<int> currentCoords = mapEntry.first;
 		std::stack<std::pair<Vector2D<float>, Vector2D<float>>> marchingSquaresResults = MarchingSquares::run(currentChunk);
-		//currentChunk.createLinesTexture(marchingSquaresResults, renderer);
-
 		std::vector<std::pair<Vector2D<float>, Vector2D<float>>> segments;
 		while (!marchingSquaresResults.empty()) {
 			segments.push_back(marchingSquaresResults.top());
 			marchingSquaresResults.pop();
 		}
-		std::unordered_map<Vector2D<float>, std::vector<Vector2D<float>>> adjacency;
 
+		std::unordered_map<Vector2D<float>, std::vector<Vector2D<float>>> adjacency;
 		for (auto& [p1, p2] : segments) {
 			adjacency[p1].push_back(p2);
 			adjacency[p2].push_back(p1);
 		}
 
-		auto res = Douglas::SegmentingLines(adjacency);
-		for (const auto& pLine : res) {
-			simplifiedPolyLines.push_back(Douglas::DouglasPeucker(pLine, 0.1f));
+		auto connectedLineGroups = Douglas::SegmentingLines(adjacency);
+		std::vector<std::vector<Vector2D<float>>> allSimplifiedPolylines;
+		std::vector<std::tuple<K::Point_2, K::Point_2, K::Point_2>> allTriangles;
+
+		for (const auto& group : connectedLineGroups) {
+			std::vector<Vector2D<float>> simplified = Douglas::DouglasPeucker(group, 2.0f);
+			if (simplified.size() < 3) continue;
+			allSimplifiedPolylines.push_back(simplified);
+
+			CDT cdt;
+			for (size_t i = 1; i < simplified.size(); ++i) {
+				Point p1(simplified[i - 1].x, simplified[i - 1].y);
+				Point p2(simplified[i].x, simplified[i].y);
+				cdt.insert_constraint(p1, p2);
+			}
+
+			// Optional: close the loop if needed
+			if (simplified.front() != simplified.back()) {
+				Point p1(simplified.back().x, simplified.back().y);
+				Point p2(simplified.front().x, simplified.front().y);
+				cdt.insert_constraint(p1, p2);
+			}
+
+			// Traverse triangles
+			for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+				if (cdt.is_infinite(fit)) continue;
+
+				Point p0 = fit->vertex(0)->point();
+				Point p1 = fit->vertex(1)->point();
+				Point p2 = fit->vertex(2)->point();
+
+				allTriangles.emplace_back(p0, p1, p2);
+			}
 		}
-		currentChunk.drawSimplifiedPolygonsTexture(simplifiedPolyLines, renderer);
+		currentChunk.drawSimplifiedPolygonsTexture(simplifiedPolyLines, allTriangles, renderer);
 	}
 }
 
