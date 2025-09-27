@@ -88,7 +88,7 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 
 	b2BodyDef bodyDef = b2DefaultBodyDef();
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position = { 65.0f, 4.0f };
+	bodyDef.position = { 13.0f, 4.0f };
 	b2BodyId bodyId = b2CreateBody(WorldManager::GetInstance().GetWorldId(), &bodyDef);
 	b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
 	b2ShapeDef shapeDef = b2DefaultShapeDef();
@@ -106,6 +106,8 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 		rect.y = static_cast<int>(position.y - 1.0f); // halfHeight = 1.0
 		rect.w = 2;  // width = 2 units (pixels)
 		rect.h = 2;  // height = 2 units (pixels)
+		rect.x += (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2;
+		rect.y += (GlobalVariables::chunkSize * GlobalVariables::worldChunkWidth) / 2;
 		// Set draw color (e.g. white)
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderFillRect(renderer, &rect);
