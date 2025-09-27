@@ -4,6 +4,10 @@
 #include "../../Utility/GlobalVariables.hpp"
 #include <random>
 #include <chrono>
+#include <box2d/types.h>
+#include <box2d/box2d.h>
+#include <set>
+#include "../../../../WorldManager.hpp"
 
 // Instantion and deletion
 
@@ -203,20 +207,37 @@ void Chunk::drawSimplifiedPolygonsTexture(const std::vector<Polyline>& simplifie
 	Uint8 rand_r = getRandomColorComponent(gen);
 	Uint8 rand_g = getRandomColorComponent(gen);
 	Uint8 rand_b = getRandomColorComponent(gen);
+	SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 128);
+	b2BodyDef groundBodyDef = b2DefaultBodyDef();
+	groundBodyDef.position = { (float)globalCoords.x * GlobalVariables::chunkSize , (float)globalCoords.y * GlobalVariables::chunkSize };
+	b2BodyId groundId = b2CreateBody(WorldManager::GetInstance().GetWorldId(), &groundBodyDef);
+
 	for (size_t i = 0; i < tris.size(); i += 3) {
 		if (i + 2 >= tris.size()) break;
-
 		const Vector2d& pA = tris[i];
 		const Vector2d& pB = tris[i + 1];
 		const Vector2d& pC = tris[i + 2];
-		SDL_SetRenderDrawColor(renderer, rand_r, rand_g, rand_b, 128);
 
 		SDL_RenderDrawLineF(renderer, pA.GetX(), pA.GetY(), pB.GetX(), pB.GetY());
 		SDL_RenderDrawLineF(renderer, pB.GetX(), pB.GetY(), pC.GetX(), pC.GetY());
 		SDL_RenderDrawLineF(renderer, pC.GetX(), pC.GetY(), pA.GetX(), pA.GetY());
 	}
 
-	// --- END MODIFICATION ---
+	for (size_t i = 0; i + 2 < tris.size(); i += 3) {
+		const Vector2d& pA = tris[i];
+		const Vector2d& pB = tris[i + 1];
+		const Vector2d& pC = tris[i + 2];
+		b2Vec2 points[3] = {
+			b2Vec2({pA.GetX(), pA.GetY()}),
+			b2Vec2({pB.GetX(), pB.GetY()}),
+			b2Vec2({pC.GetX(), pC.GetY()})
+		};
+		b2Hull hull = b2ComputeHull(points, 3);
+		b2Polygon roundedTriangle = b2MakePolygon(&hull, 0.0f);
+		b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+		b2CreatePolygonShape(groundId, &groundShapeDef, &roundedTriangle);
+	}
+	WorldManager::GetInstance().step();
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 

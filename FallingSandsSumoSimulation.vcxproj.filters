@@ -132,6 +132,9 @@
     <ClInclude Include="triangulate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WorldManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SDL2 Template.rc">
@@ -246,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="triangulate.cpp">
       <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldManager.cpp">
+      <Filter>Source Files\GameSetup</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

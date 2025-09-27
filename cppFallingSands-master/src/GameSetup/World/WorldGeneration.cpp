@@ -14,6 +14,8 @@
 #include <iostream>
 #include <math.h>   
 #include <random>
+#include <box2d/box2d.h>
+#include "../../../../WorldManager.hpp"
 
 WorldGeneration::WorldGeneration(
 	Sand* sand, Water* water, Rock* rock,
@@ -83,6 +85,35 @@ void WorldGeneration::generateBlock(SDL_Renderer* renderer) {
 		}
 		currentChunk.drawSimplifiedPolygonsTexture(simplifiedPolyLines, result, renderer);
 	}
+
+	b2BodyDef bodyDef = b2DefaultBodyDef();
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position = { 65.0f, 4.0f };
+	b2BodyId bodyId = b2CreateBody(WorldManager::GetInstance().GetWorldId(), &bodyDef);
+	b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
+	b2ShapeDef shapeDef = b2DefaultShapeDef();
+	shapeDef.density = 1.0f;
+	b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+	for (int i = 0; i < 16; ++i) {
+		WorldManager::GetInstance().step();
+		b2Vec2 position = b2Body_GetPosition(bodyId);
+		b2Rot rotation = b2Body_GetRotation(bodyId);
+		printf("%4.2f %4.2f %4.2f\n", position.x, position.y, b2Rot_GetAngle(rotation));
+
+		// Draw the box without rotation:
+		SDL_Rect rect;
+		rect.x = static_cast<int>(position.x - 1.0f); // halfWidth = 1.0
+		rect.y = static_cast<int>(position.y - 1.0f); // halfHeight = 1.0
+		rect.w = 2;  // width = 2 units (pixels)
+		rect.h = 2;  // height = 2 units (pixels)
+		// Set draw color (e.g. white)
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		SDL_RenderFillRect(renderer, &rect);
+
+		// Optionally present renderer here or after the loop
+		SDL_RenderPresent(renderer);
+	}
+
 }
 
 

@@ -10,7 +10,6 @@
 #include "Textures/Sprite.hpp"
 #include "./utility/ProceduralTerrainGen.hpp"
 #include "./utility/GlobalVariables.hpp"
-#include <box2d/box2d.h>
 
 class Sprite;
 class Pixel;
@@ -45,15 +44,7 @@ int main(int argc, char* argv[])
 	Game game;
 
 	game.init();
-	b2WorldDef worldDef = b2DefaultWorldDef();
-	worldDef.gravity = { 0.0f, -10.0f };
-	b2WorldId worldId = b2CreateWorld(&worldDef);
-	b2BodyDef groundBodyDef = b2DefaultBodyDef();
-	groundBodyDef.position = { 0.0f, -10.0f };
-	b2BodyId groundId = b2CreateBody(worldId, &groundBodyDef);
-	b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
-	b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-	b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+
 
 	const int fps = 60;
 	const double timeBetweenFrames = 1.0 / fps;
